@@ -1,0 +1,157 @@
+import { puzzleInput } from "./puzzle-input";
+import {assert} from 'chai';
+import { setCell } from "./utils";
+import { isConstructorDeclaration } from "typescript";
+
+
+const parseInput = (raw: string) => {
+	const rows = raw
+		.split('\n')
+		.map(n => n.trim())
+	
+	const [earliest, buses] = rows;
+		// .map(Number);
+
+	// const grid = new Map();
+	// rows.forEach((row, y) => {
+	// 	row.split('').forEach((cell, x)  => {
+	// 		const value = cell;
+	// 		setCell({x, y}, value, grid);
+	// 	})
+	// });
+
+
+	// 2893720453129 + 4646149166293 n
+
+	return buses.split(',').map(Number);
+}
+
+export const solve = (raw: string, starting = 104541000000000): any => {
+	const buses = parseInput(raw) as any;
+
+
+	const start = 2893720453129;
+	const jumpts = 4646149166293;
+	// console.log(buses);
+	
+
+	const waitTime = (time, bus) => {
+
+		// t = 3, B = 4
+		
+	}
+    
+	
+	let t = starting;
+	let found = false;
+
+	const bobs = buses.map((b, i) => {
+		return {b, i}
+	}).filter(({b}) => !isNaN(b));
+	
+
+	bobs.sort((a, b) => {
+		if (isNaN(a.b) || b.b > a.b) {
+			return 1;
+		}
+		return -1;
+	});
+
+	const forWolfram = bobs.map(({b, i}) => {
+		return `((x + ${i}) modulo ${b} = 0)`
+	}).join(' and ');
+	console.log(forWolfram);
+
+	// 2893720453129
+	// 100000000000000
+
+	return;
+
+
+	const first = bobs.find(({i}) => i === 0).b;
+	while (!found) {
+
+		found = true;
+
+		for (let a = 0; a < bobs.length; a++) {
+			const {b, i} = bobs[a];
+
+			const future = t + i;
+			const mod = future % b;
+
+			// console.log({mod, i, future, b, t});
+			// const d = Math.ceil(time/bus);
+			// const a = d * bus;
+			// return a - time;
+			// const time = waitTime(t, b);
+			// const delta = time - i;
+			// console.log({time, i, delta, t});
+			if (mod !== 0) {
+				// console.log('not found for', b, i, t);
+				// console.log('jumping by', b-mod);
+
+
+				t+= (b - mod);
+				found = false;
+				break;
+			}
+		}
+
+		if (found) {
+			return t;
+		}
+		if (t % 10000000 === 0) {
+			// return false;
+			console.log(t);
+		}
+		
+		
+	}
+	return t;
+
+	// return input.length;
+};
+
+// 7,13,x,x,59,x,31,19` (x mod 7 = 0 and (x+1 ) mod 13 = 0 and (x+3) mod 59 =0 and (x+5) mod 31 = 0 and (x+6) mod 19 = 0
+// 67,7,59,61  (x mod 67 = 0) and (x+1 mod 7 = 0) and (x + 2 mod 59 = 0) and (x + 3 mod 61 =  0)
+
+describe('bob', () => {
+	it('works for test case 1', () => {
+		const input = `939
+7,13,x,x,59,x,31,19`;
+		assert.equal(solve(input, 0), 1068781);
+
+		assert.equal(solve(`g
+17,x,13,19`, 0), 3417);
+	});
+
+// 	it('blob', () => {
+// 		assert.equal(solve(`g
+// 67,7,x,59,61`, 0), 1261476);
+// 	});
+
+
+	// it('works for test case 2', () => {
+	// 	const input = `HERE`;
+
+	// 	assert.equal(solve(input), 424242);
+	// });
+
+	it('show the answer when ready!', () => {
+
+		// const expected = 42;
+
+		// assert.equal(solve(puzzleInput), 'bob');
+	});
+});
+
+
+
+/*
+
+112300934 + 167234561 n
+
+475243 + 6139873 n
+
+
+*/
