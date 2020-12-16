@@ -51,8 +51,6 @@ export const solve = (raw: string): any => {
 	let mem = {};
 	let mask = '';
 
-	console.log(mask);
-
 	const cache = new Map();
 
 	const calcPermutations = (add: string) => {
@@ -99,15 +97,10 @@ export const solve = (raw: string): any => {
 			return c;
 		})).reverse().join('');
 
-
-
 		const permutations = calcPermutations(newAddress);// console.log(permutations);
 
 		permutations.forEach((add) => {
-
-
-			// const v = BigInt(`0b${add}`);
-			mem[`0b${add}`] = value;
+			mem[add] = value;
 		})
 	})
 
