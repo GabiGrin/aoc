@@ -14,21 +14,23 @@ const parseInput = (raw: string) => {
 	rows.forEach((row, y) => {
 		row.split('').forEach((cell, x)  => {
 			const value = cell;
-			setCell({x, y, z: 1}, value, grid);
+			setCell({x, y, z: 1, w: 1}, value, grid);
 		})
 	});
 
 	return grid;
 }
 
-const getNei = ({x, y, z}) => {
+const getNei = ({x, y, z, w}) => {
 
 	const n = [];
 	for (let xd =  -1 ; xd <= 1; xd ++ ) {
 		for (let yd =  -1 ; yd <= 1; yd ++ ) {
 			for (let zd = -1 ; zd <= 1; zd ++ ) {
-				if (!(xd === 0 && yd === 0 && zd === 0)) {
-					n.push({x: x + xd, y: y + yd, z: z + zd});
+				for (let wd = -1 ; wd <= 1; wd ++ ) {
+					if (!(xd === 0 && yd === 0 && zd === 0 && wd === 0)) {
+						n.push({x: x + xd, y: y + yd, z: z + zd, w: w + wd});
+					}
 				}
 			}
 		}
@@ -51,6 +53,7 @@ export const solve = (raw: string): any => {
 			const newNeigh = [];
 
 			const ne = getNei(pos);
+			// console.log(ne.length);
 
 			const v = getCell(pos, sourceGrid);
 
@@ -104,8 +107,8 @@ export const solve = (raw: string): any => {
 
 
 		let toDo = [...entries(grid).map(([k]) => {
-			const [x, y, z] = fromId(k);
-			return {x, y, z};
+			const [x, y, z, w] = fromId(k);
+			return {x, y, z, w};
 		})];
 
 
@@ -136,7 +139,7 @@ describe('bob', () => {
 ..#
 ###`;
 
-		assert.equal(solve(input), 112);
+		assert.equal(solve(input), 848);
 	});
 
 	// it('works for test case 2', () => {

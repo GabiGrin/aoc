@@ -1,11 +1,11 @@
 
-export type P = {x: number, y: number, z: number};
-export const id = (p: P) => `${p.x}|${p.y}|${p.z}`;
+export type P = {x: number, y: number, z: number, w: number};
+export const id = (p: P) => `${p.x}|${p.y}|${p.z}|${p.w}`;
 
 export const fromId = str => str.split('|').map((n) => parseInt(n));
 
-export const getCell = ({ x, y, z }, map) => map.get(id({x,y, z}));
-export const setCell = ({ x, y, z }, v, map) => map.set(id({x, y, z}), v);
+export const getCell = ({ x, y, z, w }, map) => map.get(id({x,y, z, w}));
+export const setCell = ({ x, y, z, w }, v, map) => map.set(id({x, y, z, w}), v);
 
 // export const top = ({ x, y }) => ({ x, y: y - 1 });
 // export const topLeft = ({ x, y }) => ({ x: x - 1, y: y - 1 });
