@@ -67,7 +67,15 @@ export const solve = (raw: string): any => {
 	}
 
 	const doRange = (row, [s, e]) => {
-		const chars = row.slice(s, e);
+		let chars = row.slice(s, e);
+
+
+		while (chars.includes('+')) {
+			const i = chars.indexOf('+');
+			const n1 = chars[i - 1];
+			const n2 = chars[i + 1];
+			chars.splice(i - 1, 3, n1 + n2);
+		}
 
 		console.log({chars})
 		let [sum, ...rest] = chars;
@@ -75,7 +83,7 @@ export const solve = (raw: string): any => {
 		rest.forEach((c) => {
 			console.log(c)
 			switch(c) {
-				case '+':
+				// case '+':
 				case '*':
 					lastOp = c;
 					break;
