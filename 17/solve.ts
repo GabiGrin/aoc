@@ -21,29 +21,40 @@ const parseInput = (raw: string) => {
 	return grid;
 }
 
-const getNei = ({x, y, z, w}) => {
+const getNei = (p, o: any = {}) => {
 
-	const n = [];
-	for (let xd =  -1 ; xd <= 1; xd ++ ) {
-		for (let yd =  -1 ; yd <= 1; yd ++ ) {
-			for (let zd = -1 ; zd <= 1; zd ++ ) {
-				for (let wd = -1 ; wd <= 1; wd ++ ) {
-					if (!(xd === 0 && yd === 0 && zd === 0 && wd === 0)) {
-						n.push({x: x + xd, y: y + yd, z: z + zd, w: w + wd});
-					}
-				}
-			}
-		}
+	if (typeof o.z === 'number') {
+		const opts =  [-1, 0, 1].map((n) => {
+			return {...o, w: p.w + n};
+		});
+		return opts;
+	} else if (typeof o.y === 'number') {
+		const opts =  [-1, 0, 1].map((n) => {
+			return {...o, z: p.z + n};
+		});
+
+		return opts.map((o) => getNei(p, o));
+	} else if (typeof o.x === 'number') {
+		const opts =  [-1, 0, 1].map((n) => {
+			return {...o, y: p.y + n};
+		});
+
+		return opts.map((o) => getNei(p, o));
+	} else {
+		const opts =  [-1, 0, 1].map((n) => {
+			return {x: p.x + n};
+		});
+
+		return opts.map((o) => getNei(p, o));
 	}
-	return n;
 }
 
-export const solve = (raw: string): any => {
+export const solve = (raw: string, cycles = 6): any => {
 	const input = parseInput(raw);
 
 	let grid = input;
 
-	for (let c = 0; c < 6; c++ ) {
+	for (let c = 0; c < cycles; c++ ) {
 
 		const newGrid = new Map(grid);
 
@@ -53,7 +64,8 @@ export const solve = (raw: string): any => {
 			const newNeigh = [];
 
 			const ne = getNei(pos);
-			// console.log(ne.length);
+
+			console.log(ne.length);
 
 			const v = getCell(pos, sourceGrid);
 
@@ -139,8 +151,9 @@ describe('bob', () => {
 ..#
 ###`;
 
-		assert.equal(solve(input), 848);
-	});
+		assert.equal(solve(input, 2), 60);
+		// assert.equal(solve(input), 848);
+	}).timeout(20000);
 
 	// it('works for test case 2', () => {
 	// 	const input = `HERE`;
