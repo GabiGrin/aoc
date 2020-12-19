@@ -5,8 +5,7 @@
   "main": "wallaby.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node index.ts",
-    "build": "tsc -p ."
+    "start": "ts-node index.ts"
   },
   "author": "",
   "license": "ISC",

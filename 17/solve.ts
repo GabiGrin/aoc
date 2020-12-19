@@ -21,40 +21,36 @@ const parseInput = (raw: string) => {
 	return grid;
 }
 
-const getNei = (p, o: any = {}) => {
 
-	if (typeof o.z === 'number') {
-		const opts =  [-1, 0, 1].map((n) => {
-			return {...o, w: p.w + n};
-		});
-		return opts;
-	} else if (typeof o.y === 'number') {
-		const opts =  [-1, 0, 1].map((n) => {
-			return {...o, z: p.z + n};
-		});
-
-		return opts.map((o) => getNei(p, o));
-	} else if (typeof o.x === 'number') {
-		const opts =  [-1, 0, 1].map((n) => {
-			return {...o, y: p.y + n};
-		});
-
-		return opts.map((o) => getNei(p, o));
-	} else {
-		const opts =  [-1, 0, 1].map((n) => {
-			return {x: p.x + n};
-		});
-
-		return opts.map((o) => getNei(p, o));
+let mem = new Map();
+const getNei = ({x, y, z, w}) => {
+	const i = id({x, y, z, w});
+	if (!mem.get(i)) {
+		const n = [];
+		for (let xd =  -1 ; xd <= 1; xd ++ ) {
+			for (let yd =  -1 ; yd <= 1; yd ++ ) {
+				for (let zd = -1 ; zd <= 1; zd ++ ) {
+					for (let wd = -1 ; wd <= 1; wd ++ ) {
+						if (!(xd === 0 && yd === 0 && zd === 0 && wd === 0)) {
+							n.push({x: x + xd, y: y + yd, z: z + zd, w: w + wd});
+						}
+					}
+				}
+			}
+		}
+		mem.set(i, n);	
 	}
+	
+	return mem.get(i);
 }
 
-export const solve = (raw: string, cycles = 6): any => {
+
+export const solve = (raw: string): any => {
 	const input = parseInput(raw);
 
 	let grid = input;
 
-	for (let c = 0; c < cycles; c++ ) {
+	for (let c = 0; c < 6; c++ ) {
 
 		const newGrid = new Map(grid);
 
@@ -64,23 +60,19 @@ export const solve = (raw: string, cycles = 6): any => {
 			const newNeigh = [];
 
 			const ne = getNei(pos);
-
-			console.log(ne.length);
+			// console.log(ne.length);
 
 			const v = getCell(pos, sourceGrid);
 
 			let actions = 0;
 
-			if (v === '#') {
-				ne.forEach(n => {
-					if (!getCell(n, sourceGrid)) {
-						setCell(n, '.', targetGrid);
-						newNeigh.push(n);
-					}
-				});
-
-			}
-
+			// if (v === '#') {
+			// 	ne.forEach(n => {
+			// 		if (!getCell(n, sourceGrid)) {
+			// 			// setCell(n, '.', targetGrid);
+			// 			// newNeigh.push(n);
+			// 		}
+			// 	});
 
 			const act = ne.filter((p) => {
 				const vv = getCell(p, sourceGrid);
@@ -109,19 +101,13 @@ export const solve = (raw: string, cycles = 6): any => {
 			vis.add(id(pos));
 			
 			return newNeigh;
-			// if (actions > 0) {
-			// 	console.log(actions);
-			// } else {
-			// 	return [];
-			// }
-
 		}
 
 
-		let toDo = [...entries(grid).map(([k]) => {
+		let toDo = entries(grid).map(([k]) => {
 			const [x, y, z, w] = fromId(k);
 			return {x, y, z, w};
-		})];
+		});
 
 
 		while (toDo.length) {
@@ -151,9 +137,8 @@ describe('bob', () => {
 ..#
 ###`;
 
-		assert.equal(solve(input, 2), 60);
-		// assert.equal(solve(input), 848);
-	}).timeout(20000);
+		assert.equal(solve(input), 848);
+	});
 
 	// it('works for test case 2', () => {
 	// 	const input = `HERE`;
@@ -168,4 +153,3 @@ describe('bob', () => {
 		// assert.equal(solve(puzzleInput), 'bob');
 	});
 });
-

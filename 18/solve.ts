@@ -19,84 +19,18 @@ const parseInput = (raw: string) => {
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
 
-	
-	const calcMaxDepth = (row) => {
-	
-		let depth = 0;
-		let maxDepth = 0;
-		row.forEach((next) => {
-			switch (next) {
-				case '(':
-					depth++;
-					maxDepth = Math.max(depth, maxDepth);
-					break;
-				case ')':
-					depth--;
-					break;
+	const calcRow = (row) => {
+
+		const crunch = () => {
+
+			let iplus = row.indexOf('+');
+			let imult = row.indexOf('*');
+			let m = Math.max(iplus, imult);
+			while (m > -1) {
+
+
 			}
-		});
-		return maxDepth;
-	}
-
-	const calcGroups = (row, targetDepth) => {
-	
-		let depth = 0;
-		const gr = [];
-
-		let start = 0;
-		row.forEach((next, i) => {
-			switch (next) {
-				case '(':
-					depth++;
-					if (depth === targetDepth) {
-						start = i;
-					}
-					break;
-				case ')':
-					if (depth === targetDepth) {
-
-						gr.push([start + 1, i])
-					}
-					depth--;
-					break;
-				default:
-			}
-		})
-
-		return gr;
-	}
-
-	const doRange = (row, [s, e]) => {
-		let chars = row.slice(s, e);
-
-
-		while (chars.includes('+')) {
-			const i = chars.indexOf('+');
-			const n1 = chars[i - 1];
-			const n2 = chars[i + 1];
-			chars.splice(i - 1, 3, n1 + n2);
 		}
-
-		console.log({chars})
-		let [sum, ...rest] = chars;
-		let lastOp = '';
-		rest.forEach((c) => {
-			console.log(c)
-			switch(c) {
-				// case '+':
-				case '*':
-					lastOp = c;
-					break;
-				default:
-					console.log(c);
-					const n = parseInt(c);
-					sum= lastOp === '+' ? sum + n : sum * n;
-			}
-		});
-		return sum;
-	}
-
-	const calcRow = (initRow) => {
 
 		let row = initRow;
 		let mDepth = calcMaxDepth(initRow);
@@ -130,7 +64,6 @@ export const solve = (raw: string): any => {
 describe('bob', () => {	
 	it('works for test case 1', () => {
 		const input = `1 + (2 * 3) + (4 * (5 + 6))`;
-
 		assert.equal(solve(input), 51);
 	});
 
