@@ -2,8 +2,9 @@ module.exports = function (w) {
 
 	return {
 	  files: [
-		'puzzle-input.ts',
-		'input.txt'
+		'*.ts',
+		'input.txt',
+		{ pattern: 'solve.ts', ignore: true } 
 	  ],
   
 	  tests: [
