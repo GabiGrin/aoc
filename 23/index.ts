@@ -10,6 +10,7 @@ import { solve } from "./solve";
 import { puzzleInput } from "./puzzle-input";
 
 (async () => {
-	console.log('answer is ', solve(puzzleInput, 100));
+	// console.log('answer is ', solve('389125467'));
+	console.log('answer is ', solve(puzzleInput));
 })()
 

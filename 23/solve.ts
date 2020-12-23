@@ -19,58 +19,53 @@ const print = (node) => {
 	return res;
 }
 
-const findNode = (node, des) => {
 
-	if (node.label === des) {
-		return node;
-	}
-	let curr = node.right;
-
-	while (curr !== node ){ 
-		if (!curr) {
-			throw 'bob  on ' + node.label;
-		}
-		if (curr.label === des) {
-			return curr;
-		}
-		if (!curr.right) {
-			throw 'bob  on ' + curr.label;
-		}
-		curr = curr.right;
-	}
-}
-
-const detachRight = ( node) => {
-	const right = node.right;
-	node.right = null;
-	right.left = null;
-}
-
-const detachLeft = ( node) => {
-	const left = node.left;
-	node.left = null;
-	left.right = null;
-}
-
-export const solve = (raw: string, moves): any => {
+export const solve = (raw: string, moves = 10000000, totalItems = 1000000): any => {
 	const input = parseInput(raw);
+
+	let lastMax = 10;
+	while (input.length !== totalItems) {
+		input.push(lastMax++);
+	}
+	// console.log('done with arrya', input);
 
 	const LENGTH = input.length;
 
 	const nodes = input.map(label => ({label, left: null, right: null}));
 
+	const map = new Map();
+
+	const findNode = (node, des) => {
+
+		// if (node.label === des) return node;
+		// let curr = node.right;
+		// while (curr !== node ) {
+		// 	if (curr.label === des) return curr;
+		// 	curr = curr.right;
+		// }
+		// throw new Error (`No node ${des}`);
+		return map.get(des);
+	}
+
 	nodes.forEach((node, i) => {
 		node.left = nodes[i - 1 > -1 ? i - 1: LENGTH - 1];
 		node.right = nodes[(i + 1) % LENGTH];
+
+		if (map.get(node.label)) {
+			throw 'bob'
+		}
+		map.set(node.label, node);
 	});
 
-	const findNext = (node) => {
+	console.log('done with nodes');
+
+	const findNext = (node, disabled) => {
 		let destination = node.label - 1;
 
-		while (!findNode(node, destination)) {
+		while (disabled.includes(destination) || destination < 1) {
 			destination--;
 			if (destination < 1) {
-				destination = 9;
+				destination = totalItems;
 			}
 		}
 		return destination;
@@ -91,13 +86,15 @@ export const solve = (raw: string, moves): any => {
 
 		nextPartialCups[2].right = null;
 
-		const target = findNext(currNode);
+		const target = findNext(currNode, nextPartialCups.map(c => c.label));
+
+		// console.log(target);
 
 		const destination =  findNode(currNode, target);
 		
 		if (!destination) {
 			// console.log(print(currNode))
-			throw new Error(`cant find cup ${currNode.label - 1} or 9 from ${currNode.label}`)
+			throw new Error(`cant find cup ${target} from ${currNode.label}`)
 		} else {
 			// console.log('found', destination.label);
 		}
@@ -117,18 +114,20 @@ export const solve = (raw: string, moves): any => {
 	console.log(currNode.label);
 
 	const cup1 = findNode(currNode, 1);
-	console.log(cup1);
 
-	// let r = '';
-	return print(cup1).replace('1', '');
+	console.log(cup1.right.label, cup1.right.right.label);
+	const nexts = [cup1.right, cup1.right.right];
+	return nexts[0].label * nexts[1].label;
+
+	// return print(cup1).replace('1', '');
 };
 
 describe('bob', () => {	
 	it('works for test case 1', () => {
 		const input = `389125467`;
-
-		// assert.equal(solve(input, 10), '92658374');
-		assert.equal(solve(input, 100), '67384529');
+		// assert.equal(solve(input, 10, 9), '92658374');
+		// assert.equal(solve(input, 100, 9), '67384529');
+		assert.equal(solve(input), 149245887792);
 	});
 
 	// it('works for test case 2', () => {
@@ -141,7 +140,7 @@ describe('bob', () => {
 
 		// const expected = 42;
 
-		assert.equal(solve(puzzleInput, 100), 'bob');
+		// assert.equal(solve(puzzleInput, 100), 'bob');
 	});
 });
 
