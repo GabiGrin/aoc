@@ -57,7 +57,7 @@ export const solve = (raw: string, moves = 10000000, totalItems = 1000000): any 
 		map.set(node.label, node);
 	});
 
-	console.log('done with nodes');
+	// console.log('done with nodes');
 
 	const findNext = (node, disabled) => {
 		let destination = node.label - 1;
