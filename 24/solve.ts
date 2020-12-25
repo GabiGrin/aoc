@@ -55,7 +55,7 @@ const parseInput = (raw: string) => {
 	return rows;
 }
 
-export const solve = (raw: string): any => {
+export const solve = (raw: string, totalDays = 100): any => {
 	const input = parseInput(raw);
 	//const bobs = 'e, se, sw, w, nw, ne'.split(', ');
 
@@ -114,23 +114,12 @@ export const solve = (raw: string): any => {
 		'nw+e': 'ne+X'
 	};
 
-	const trans2 = {
-
-	}
-
-	
 	const norm = (_row, trans: any) => {
 		const pairs: any = Object.entries(trans).map(([k, v]) => {
 			return {from: k.split('+'), to: (v as any).split('+')} as any
 		});
 	
-		console.log(pairs);
-		// se se nw ne ne ne w se e sw w sw sw w ne ne w se w sw
-		// se X[se nw] ne ne ne w se Xe sw Xw sw sw w ne ne w se w sw
 		const row = [..._row];
-
-		console.log(row);
-
 		let found = pairs.filter(({from}) => row.includes(from[0]) && row.includes(from[1]))[0];
 
 		while (found) {
@@ -140,43 +129,126 @@ export const solve = (raw: string): any => {
 
 
 			row[i1] = found.to[0];
-			// if (s.length === 2) row[i1 + 1] = 'X';
-			
-			// row[i2] = 'X';
 			row[i2] = found.to[1];
-			// row[i2] = 'X';
-			// if (t.length === 2) row[i2 + 1] = 'X';
 
 			found = pairs.filter(({from}) => row.includes(from[0]) && row.includes(from[1]))[0];
 		}
 
 		const ret =  row.filter((r) => r !== 'X');
 
-		console.log(ret);
-		return ret;
+		return ret.sort();
 	}
 
-	const norms = input.map(r => norm(r, trans1))
-		// .map((r) => norm(r, trans2))
-		.map(r => r.sort().join(','));
+	const tiles = input.map(r => norm(r, trans1))
 
-	const m = new Map();
-	const times = norms.forEach((r) => {
-		m.set(r, (m.get(r) || 0) + 1)
+	const initState = new Map();
+	tiles.forEach((_r) => {
+		const r = _r.join(',')
+		initState.set(r, (initState.get(r) || 0) + 1)
 	});
 
-	const bobs = Array.from(m.entries()).filter(([k,v]) => {
-		// console.log(v)
-		return v === 1;
-		if (k === 1) {
-			return v;
+	let currState = new Map(initState);
+
+
+	const mem = new Map();
+
+	const runDay = () => {
+
+		const newState = new Map(currState);
+
+		const neighbours = (tile) => {
+			if (!mem.get(tile.join(','))) {
+
+				const n1 = ['e', 'w', 'ne', 'nw', 'se', 'sw'].map((t) => [...tile, t]);
+				// console.log(n1, tile);
+				const n2 = n1.map(n => norm(n, trans1));
+				// return n2;
+				mem.set(tile.join(','), n2);
+			} else {
+				// console.log('hit');
+			}
+			return mem.get(tile.join(','));
 		}
-	})
 
-	console.log(bobs);
-	console.log(m);
+		const countBlacks = (tile) => {
+			const ne = neighbours(tile);
 
-	return Array.from(m.values()).filter((n) => n % 2 === 1).length
+			const blacks = ne.filter((tile) => {
+				const c = currState.get(tile.join(',')) || 0;
+				// console.log(c);
+				return c % 2 === 1;
+			});
+
+			return blacks.length;
+		}
+
+
+		const normArr = s => s.filter(s => !!s);
+		const toCheckRaw = Array.from(currState.keys())
+			.reduce((all, curr) => {
+				const tiles = normArr(curr.split(','));
+				const ne = neighbours(tiles);
+				return [...all, tiles, ...ne];
+			}, []).map(r => r.join(','))
+
+			
+		const toCheck = Array.from(new Set(toCheckRaw)).map((r: any) => normArr(r.split(',')));
+			
+		// console.log('bob', toCheckRaw.length);
+		// console.log('going to check', toCheck.length);
+
+
+		// console.log(toCheck);
+		toCheck.forEach((tile) => {
+
+			const tk = tile.join(',');
+			const curr = currState.get(tk) || 0;
+			const blacks = countBlacks(tile);
+
+			if (curr % 2 === 1 ) {
+				if (blacks === 0 || blacks > 2) {
+					newState.set(tk, curr + 1);
+				}
+			} else {
+				if (blacks === 2) {
+					newState.set(tk, curr + 1);
+				}
+			}
+		});
+
+		currState = newState;
+	}
+
+	for (let d = 0; d < totalDays; d++ ) {
+		const c1 = Array.from(currState.values()).filter((n) => n % 2 === 1).length
+		// console.log('blck state before', c1);
+
+		console.log('running d', d);
+		runDay();
+
+		const c2 = Array.from(currState.values()).filter((n) => n % 2 === 1).length
+		// console.log('blck state after', c2);
+
+	}
+
+	// const bobs = Array.from(m.entries()).filter(([k,v]) => {
+	// 	// console.log(v)
+	// 	return v === 1;
+	// 	if (k === 1) {
+	// 		return v;
+	// 	}
+	// })
+
+	/*
+	Any black tile with zero or more than 2 black tiles immediately adjacent to it is flipped to white.
+Any white tile with exactly 2 black tiles immediately adjacent to it is flipped to black.
+
+	*/
+
+	// console.log(bobs);
+	// console.log(m);
+
+	return Array.from(currState.values()).filter((n) => n % 2 === 1).length
 };
 
 describe('bob', () => {	
@@ -201,8 +273,10 @@ nenewswnwewswnenesenwnesewesw
 eneswnwswnwsenenwnwnwwseeswneewsenese
 neswnwewnwnwseenwseesewsenwsweewe
 wseweeenwnesenwwwswnew`;
-
-		assert.equal(solve(input), 10);
+		// assert.equal(solve(input, 1), 15);
+		// assert.equal(solve(input, 2), 12);
+		// assert.equal(solve(input, 3), 25);
+		assert.equal(solve(input), 2208);
 	});
 
 	// it('works for test case 2', () => {
@@ -215,7 +289,7 @@ wseweeenwnesenwwwswnew`;
 
 		// const expected = 42;
 
-		assert.equal(solve(puzzleInput), 'bob');
+		// assert.equal(solve(puzzleInput), 'bob');
 	});
 });
 
