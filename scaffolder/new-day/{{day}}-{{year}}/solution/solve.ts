@@ -1,12 +1,14 @@
 // import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
 import { getTestCases } from '../runtime/lib/get-tests';
+import { readInputFile } from '../runtime/lib/input-output-files';
 
 const parseInput = (raw: string) => {
 	const rows = raw
 		.split('\n')
 		.map(n => n.trim())
 		.filter((v) => !!v)
+		// .map(Number);
 
 	return rows;
 }
@@ -14,24 +16,7 @@ const parseInput = (raw: string) => {
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
 
-	const diffLtrs = (w1, w2) => {
-		return w1.split('').filter((c, i) => w2[i] !== c);
-	}
-
-	for (let i1 = 0; i1 < input.length; i1++) {
-		const e1 = input[i1];
-		
-		for (let i2 = 0; i2 < input.length; i2++) {
-			const e2 = input[i2];
-
-			const d = diffLtrs(e1, e2);
-
-			if (d.length === 1) {
-				return e1.replace(d[0], '');
-			}
-			
-		}
-	}
+	return input.length;
 };
 
 // for wallaby
@@ -84,5 +69,13 @@ describe('part 1 tests', () => {
 		} else {
 			// no test case
 		}
+	});
+
+	it('passes input if exists', () => {
+		// const input = readInputFile();
+		
+		
+		// const actual = solve(input);
+		// console.log({actual});
 	});
 })

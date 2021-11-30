@@ -1,0 +1,6 @@
+{
+    "name": "gabi-aoc",
+    "scripts": {
+        "start": "npx scaffolder-cli i --template new-day"
+    }
+}
