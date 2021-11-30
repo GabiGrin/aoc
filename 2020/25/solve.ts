@@ -45,12 +45,12 @@ export const solve = (raw: string): any => {
 		}
 		return val;
 	}
-	const calcLoop = (bob) => {
+	const calcLoop = (target) => {
 		let sub = 7;
 		let val = 1;
 
 		let loop = 0;
-		while (val !== bob) {
+		while (val !== target) {
 			val =  val * sub;
 			val = val % DIV;
 			loop++;
