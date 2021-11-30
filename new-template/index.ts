@@ -1,26 +1,39 @@
+import { initInputDownloader } from "./runtime/init-input-downloader";
+import { createAocClient } from "./runtime/lib/aoc-api";
+import { backupPart1Solution } from "./runtime/lib/backup-part1-solution";
+import { getLastState, setLastState } from "./runtime/lib/last-state";
+import { notify } from "./runtime/lib/notifier";
+import { getPuzzleConfig } from "./runtime/lib/puzzle-config";
+import { resetTests } from "./runtime/lib/reset-tests";
+import { initSolver } from "./runtime/runner";
 
-import { getAocConfig, notify, solveForked } from "./lib";
-import { initInputDownloader, initTestSolver } from "./lib/runner";
+const config = getPuzzleConfig();
 
-// // hack for running from terminal in a non-wallaby context easily
-// const g: any = global;
-// if (!g.describe) {
-// 	g.describe = () => {};
-// 	g.it = () => {};
-// }
+const client = createAocClient(config);
 
-// import { solve } from "./solution/solve";
-// import { puzzleInput } from "./lib/lib";
-
-// (async () => {
-// 	console.log('answer is ', solve(puzzleInput));
-// })()
-
-const config = getAocConfig();
 notify(`Starting AOC Solver for day ${config.day} of year ${config.year}. Good luck!`);
-initInputDownloader()
-    .then(() => {
-        notify(`Input is taken care of. Starting tests solver. Good luck!`)
-        initTestSolver();
+initInputDownloader(client)
+    .then(async () => {
+        notify(`Input is ready on "input.txt"`);
+        
+        const state = await client.currentPart();
+        
+        if (state === 'done') {
+            notify(`Looks like you have completed day ${config.day} of ${config.year}! Ba-bye now`)
+            process.exit(0);
+        }
+        const lastState = getLastState();
+        
+        if (state !== lastState) {
+            notify(`Looks like you have solved part 1 outside of the AoC-Runner™, resetting tests!`);
+            resetTests();
+            backupPart1Solution();
+        }
+        notify(`Input is taken care of. Starting tests solver on part ${state}. Good luck!`)
+        
+        setLastState(state);
+        
+        await initSolver(state);
+        process.exit(0);
     });
 

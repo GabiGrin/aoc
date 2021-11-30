@@ -4,6 +4,8 @@ export const id = (p: P) => `${p.x}|${p.y}`;
 
 export const seq = (n: number) => Array(n).fill('x').map((_, i) => i);
 
+export const delay = (ms) => (new Promise(r => setTimeout(r, ms)));
+
 export const fromId = str => str.split('|').map((n) => parseInt(n));
 
 export const getCell = ({ x, y }, map) => map.get(id({x,y}));
