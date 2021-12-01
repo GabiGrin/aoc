@@ -2,6 +2,7 @@ import { forkedSolve } from "./forked-solve";
 import { getTestCases } from "./get-tests";
 
 export const runTests = () => {
+
     const fixtures = getTestCases();
 
     const results = fixtures.map(({input }) => {

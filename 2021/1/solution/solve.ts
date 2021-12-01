@@ -1,6 +1,8 @@
 // import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
 import { getTestCases } from '../runtime/lib/get-tests';
+
+
 import { readInputFile } from '../runtime/lib/input-output-files';
 
 const parseInput = (raw: string) => {
@@ -8,7 +10,7 @@ const parseInput = (raw: string) => {
 		.split('\n')
 		.map(n => n.trim())
 		.filter((v) => !!v)
-		// .map(Number);
+		.map(Number);
 
 	return rows;
 }
@@ -16,7 +18,15 @@ const parseInput = (raw: string) => {
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
 
-	return input.length;
+
+	const sums = [];
+	for (let i = 2; i < input.length; i++) {
+		const s  = input[i]  + input[i - 1] + input[i - 2];
+		sums.push(s);
+	}
+	return sums.reduce((a, b, i, arr) => {
+		return  b > arr[i -1] ? a + 1 : a;
+	}, 0)
 };
 
 // for wallaby

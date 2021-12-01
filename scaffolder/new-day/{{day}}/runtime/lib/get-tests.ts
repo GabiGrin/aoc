@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "fs";
 import { seq } from "../../solution/utils";
+import { notify } from "./notifier";
 
 const getTestCase = (n) => {
     const input = readFileSync(`./tests/case${n}-input`, 'utf-8');
@@ -19,15 +20,18 @@ export const getTestCases = () => {
     })
     .filter(({input, expected, n}) => {
         if (input === 'TBD' && expected) {
-            throw new Error(`You haven't entered an input for case ${n} but enterred an expected value. This is probably a mistake. Fix this.`);
+            notify(`You haven't entered an input for case ${n} but enterred an expected value. This is probably a mistake. Fix this.`);
+            return false;
         }
 
         if (input !== 'TBD' && !expected) {
-            throw new Error(`You haven't entered an expected value for case ${n} but enterred an input. This is probably a mistake. Fix this.`);
+            notify(`You haven't entered an expected value for case ${n} but enterred an input. This is probably a mistake. Fix this.`);
+            return false;
         }
 
         if (!input) {
-            throw new Error(`You've erased input for case ${n}. This might be a mistake.. To skip it leave it "TBD" and leave the output empty`);
+            notify(`You've erased input for case ${n}. This might be a mistake.. To skip it leave it "TBD" and leave the output empty`);
+            return false;
         }
         return input !== 'TBD';
     });

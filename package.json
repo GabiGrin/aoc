@@ -1,7 +1,7 @@
 {
     "name": "gabis-aoc",
     "scripts": {
-        "start": "npx scaffolder-cli i --template new-day"
+        "start": "bash start.sh"
     },
     "author": "",
     "license": "ISC",
