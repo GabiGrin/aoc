@@ -1,7 +1,6 @@
 import { PuzzleConfig } from "./puzzle-config"
 import { AocClient } from 'advent-of-code-client';
 import axios from 'axios';
-import { exec } from "child_process";
 
 export type PuzzlePart = '1' | '2';
 export type PuzzleState = PuzzlePart | 'done';
@@ -39,10 +38,6 @@ export const createAocClient = ({year, day, token}: PuzzleConfig) => {
             target.setFullYear(year);
     
             return Date.now() >= target.getTime();
-        },
-        openRiddleInBrowser: () => {
-            const url = `https://adventofcode.com/${year}/day/${day}`;
-            exec(`open ${url}`);
         }
     }
 }

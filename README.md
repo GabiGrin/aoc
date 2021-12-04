@@ -1,7 +1,6 @@
 # Advent of code solutions + template 
 
-Whatever managed to solve the day fast I push.
-As-is. 0 refactoring. Many variables named "bob"
+### Warning: some of the code didn't get proper refactoring after submission and will be very ugly to read! wear mutation-and-for-loop goggles.
 
 ## Using the template + runtime
 1. npm install in root

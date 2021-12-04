@@ -1,4 +1,3 @@
-import { access } from "fs";
 
 export type P = {x: number, y: number};
 export const id = (p: P) => `${p.x}|${p.y}`;
@@ -38,43 +37,3 @@ export const llNode = (val: any): LlNode => ({val});
 
 export type GraphNode = {val: any, children: GraphNode[]};
 export const graphNode = (val: any): GraphNode => ({val, children: []});
-
-
-export const chunk = <T>(arr: Array<T>, size: number): Array<Array<T>> => {
-	return arr.reduce((acc, row, idx) => {
-		const t = Math.floor(idx / size);
-		const grid = acc[t] || [];
-		grid.push(row);
-		acc[t] = grid;
-		return acc;
-	}, []);
-}
-
-export type Matrix<T> = Array<Array<T>>;
-
-export const rotateMatrixClockWise = <T>(mat: Matrix<T>) => {
-	return mat[0].map((_, index) => (
-		mat.map(row => row[index])
-	)).reverse();
-}
-
-export const reduceMatrix = <T, Acc>(mat: Matrix<T>, reducer: (acc: Acc, curr: T, rowIdx: number, colIdx: number) => Acc, init: Acc): Acc => {
-	let accVal = init;
-	for (let rowIdx = 0; rowIdx < mat.length; rowIdx++) {
-		const row = mat[rowIdx];
-		
-		for (let colIdx = 0; colIdx < row.length; colIdx++) {
-			const cell = row[colIdx];
-			accVal = reducer(accVal, cell, rowIdx, colIdx);
-		}
-	}
-	return accVal;
-}
-
-export const mapMatrix = <T, K>(mat: Matrix<T>, map: (curr: T, rowIdx: number, colIdx: number) => K): Matrix<K> => {
-	return mat.map((row, rowIdx) => {
-		return row.map((cell, colIdx) => {
-			return map(cell, rowIdx, colIdx);
-		})
-	});
-}

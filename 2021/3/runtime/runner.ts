@@ -25,8 +25,6 @@ export const initSolver = async (initialPart: PuzzlePart) => {
 
     setLastState(initialPart);
 
-    client.openRiddleInBrowser();
-
     const trySolvingTestCases = async () => {
       notify(`Running part ${currentPart} tests..`);
 
@@ -74,10 +72,9 @@ export const initSolver = async (initialPart: PuzzlePart) => {
             } else {
               resetTestsOutputs();
               backupPart1Solution();
-              notify(`✅⭐️ Part 1 Completed! Tests reset and solution backed-up. Opening browser! Good luck on next part!`);
+              notify(`✅⭐️ Part 1 Completed! Tests reset and solution backed-up. Good luck!`);
               currentPart = '2';
               setLastState(currentPart)
-              client.openRiddleInBrowser();
             }
 
           } else {

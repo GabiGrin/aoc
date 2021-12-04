@@ -1,0 +1,183 @@
+2// import { puzzleInput } from "../lib/lib";
+import {assert} from 'chai';
+import { clearLine } from 'readline';
+import { getTestCases } from '../runtime/lib/get-tests';
+import { readInputFile } from '../runtime/lib/input-output-files';
+
+const parseInput = (raw: string) => {
+	const rows = raw
+		.split('\n')
+		.map(n => n.trim())
+		.filter((v) => !!v);
+
+	const [first, ...rest] = rows;
+
+	const numbers = first.split(',').map(Number);
+	
+
+	const tickets = rest.reduce((acc, row, idx) => {
+		const t = Math.floor(idx / 5);
+		console.log(t);
+
+		const grid = acc[t] || [];
+		grid.push(row.split(/\s+/).map(Number));
+
+		acc[t] = grid;
+
+		console.log(grid);;
+
+		return acc;
+		
+	
+
+	}, []);
+
+	console.log(tickets);
+	
+
+	return {tickets, numbers};
+}
+
+export const solve = (raw: string): any => {
+	const {numbers, tickets} = parseInput(raw);
+
+	const hasWon = (ticket: any[][]) => {
+
+		const rows = [];
+		const cols = [];
+
+		for (let x = 0; x < ticket.length; x++) {
+			const row = ticket[x];
+			
+			for (let y = 0; y < row.length; y++) {
+				const cell = row[y];
+
+
+				if (cell === 'x') {
+					rows[x] = (rows[x] || 0 ) + 1;
+					cols[y] = (cols[y] || 0 ) + 1;
+				}
+			}
+		}
+
+		const hasRow = rows.find(c => c === 5);
+		const hasCol = cols.find(c => c === 5);
+
+		return hasRow || hasCol;
+	
+	}
+
+	const markNumber = (tickets: any[][], number: number) => {
+		for (let ti = 0; ti < tickets.length; ti++) {
+			const ticket = tickets[ti];
+			
+			for (let tx = 0; tx < ticket.length; tx++) {
+				const row = ticket[tx];
+				
+				for (let ty = 0; ty < row.length; ty++) {
+					const cell = row[ty];
+					
+					if (cell === number) {
+						console.log('Found on ticket', ti);
+						tickets[ti][tx][ty] = 'x';
+					}
+				}
+			}
+		}
+	}
+
+	const calcLeftNumbers = (ticket) => {
+		let v = 0;
+
+		for (let tx = 0; tx < ticket.length; tx++) {
+			const row = ticket[tx];
+
+			for (let ty = 0; ty < row.length; ty++) {
+				const cell = row[ty];
+				if (cell !== 'x') {
+					v+=cell;
+				}
+				
+			}
+			
+		}
+		return v;
+	}
+
+	for (let n = 0; n < numbers.length; n++) {
+		const num = numbers[n];
+		
+		markNumber(tickets, num);
+
+		const won = tickets.find(hasWon);
+
+		if (won) {
+			const left = calcLeftNumbers(won);
+			return num * left
+		}
+
+
+		
+	}
+};
+
+// for wallaby
+describe('part 1 tests', () => {
+	it('passes for case 1 if exists', () => {
+		const case1 = getTestCases()[0];
+		if (case1) {
+			const actual = solve(case1.input);			
+			assert.equal(actual, case1.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 2 if exists', () => {
+		const case2 = getTestCases()[1];
+		if (case2) {
+			const actual = solve(case2.input);
+			assert.equal(actual, case2.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 3 if exists', () => {
+		const case3 = getTestCases()[2];
+		if (case3) {
+			const actual = solve(case3.input);
+			assert.equal(actual, case3.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 4 if exists', () => {
+		const case4 = getTestCases()[3];
+		if (case4) {
+			const actual = solve(case4.input);
+			assert.equal(actual, case4.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 5 if exists', () => {
+		const case5 = getTestCases()[4];
+		if (case5) {
+			const actual = solve(case5.input);
+			assert.equal(actual, case5.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes input if exists', () => {
+		// const input = readInputFile();
+		
+		
+		// const actual = solve(input);
+		// console.log({actual});
+	});
+})
