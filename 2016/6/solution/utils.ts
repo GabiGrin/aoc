@@ -1,14 +1,9 @@
+import { access } from "fs";
+
 export type P = {x: number, y: number};
 export const id = (p: P) => `${p.x}|${p.y}`;
 
-export function range(to: number): number[];
-
-export function range(from:number, to:number): number[];
-
-export function range (toOrFrom: any, maybeTo?: any) {
-	const [from, to] = maybeTo ? [toOrFrom, maybeTo] : [0, toOrFrom];
-	return Array(to - from).fill('x').map((_, i) => from + i);
-}
+export const seq = (n: number) => Array(n).fill('x').map((_, i) => i);
 
 export const delay = (ms) => (new Promise(r => setTimeout(r, ms)));
 
@@ -27,31 +22,6 @@ export const left = ({ x, y }) => ({ x: x - 1, y });
 export const right = ({ x, y }) => ({ x: x + 1, y });
 
 export const manDis = (p: P) => Math.abs(p.x) + Math.abs(p.y);
-
-export const vectorLength = ({x, y}: P) => {
-	return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
-}
-
-export const vectorAdd = (p1: P, p2: P) => {
-	return {x: p1.x + p2.x, y: p1.y + p2.y}
-}
-
-export const vectorSub = (p1: P, p2: P) => {
-	return {x: p1.x - p2.x, y: p1.y - p2.y}
-}
-
-export const vectorMul = (p1: P, s: number) => {
-	return {x: p1.x * s, y: p1.y * s}
-}
-
-export const vectorDiv = (p1: P, s: number) => {
-	return {x: p1.x / s, y: p1.y / s}
-}
-
-export const vectorsDis = (p1: P, p2: P) => {
-	const d = vectorSub(p2, p1);
-	return vectorLength(d);
-}
 
 export const dirs = {
 	U: top,

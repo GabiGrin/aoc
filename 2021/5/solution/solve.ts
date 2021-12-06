@@ -1,52 +1,47 @@
-2// import { puzzleInput } from "../lib/lib";
+// import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
-import { clearLine } from 'readline';
+import { EndOfLineState, setOriginalNode } from 'typescript';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
-import { chunk, mapMatrix, reduceMatrix, rotateMatrixClockWise } from './utils';
+import { dis, getCell, manDis, range, setCell, values, vectorAdd, vectorDiv, vectorsDis, vectorSub } from './utils';
 
 const parseInput = (raw: string) => {
 	const rows = raw
 		.split('\n')
 		.map(n => n.trim())
-		.filter((v) => !!v);
+		.filter((v) => !!v)
+		.map(v => {
+			const [, x1, y1, x2, y2] = v.match(/(\d+),(\d+)\s+->\s(\d+),(\d+)/).map(Number);
+			return {l1: {x: x1, y: y1}, l2: {x: x2, y: y2}};
+		});
+		
 
-	const [first, ...rest] = rows;
-
-	const numbers = first.split(',').map(Number);	
-	const tickets = chunk(rest.map(row => row.split(/\s+/).map(Number)), 5)
-	return {tickets, numbers};
+	return rows;
 }
 
 export const solve = (raw: string): any => {
-	let {numbers, tickets} = parseInput(raw);
+	const input = parseInput(raw);
 
-	const applyNumber = (ticket, number) => mapMatrix(ticket, v => v === number ? 'x' : v);
-	const hasFullRow = ticket => ticket.filter(r => r.every(c => c === 'x')).length > 0;;
+	const grid = input.reduce((acc, {l1, l2}) => {
+		const deltaLines = vectorSub(l2, l1);
+		const dis = manDis(deltaLines);
+		const sx = Math.ceil(deltaLines.x / dis);
+		const sy = Math.ceil(deltaLines.y / dis);
 
-	const hasWon = (ticket) => hasFullRow(ticket) || hasFullRow(rotateMatrixClockWise(ticket));
+		return range(dis + 1).reduce((acc2, i) => {
+			const step = {x: i * sx, y: i * sy};
+			const {x, y} = vectorAdd(l1, step);
+			const curr = getCell({x, y}, acc2) || 0;
+			return setCell({x, y}, curr + 1, acc2);
+		}, acc);
+	}, new Map());
 
-	const findLast = (tickets, numbers) => {
-		const [num, ...rest] = numbers;
-		const playTickets = tickets.map(t => applyNumber(t, num));
-
-		if (playTickets.length === 1 && hasWon(playTickets[0])) {
-			return {ticket: playTickets[0], number: num}
-		} else {
-			const remaining = playTickets.filter(t => !hasWon(t));
-			return findLast(remaining, rest);
-		}
-	}
-
-	const {ticket, number} = findLast(tickets, numbers);
-	const remaining = reduceMatrix(ticket, (acc, cell: any) => acc + (cell === 'x' ? 0 : cell), 0);
-
-	return remaining * number;
+	return values(grid).filter(v => v > 1).length;
 };
 
 // for wallaby
 describe('part 1 tests', () => {
-	it.only('passes for case 1 if exists', () => {
+	it('passes for case 1 if exists', () => {
 		const case1 = getTestCases()[0];
 		if (case1) {
 			const actual = solve(case1.input);			
@@ -97,11 +92,10 @@ describe('part 1 tests', () => {
 	});
 
 	it('passes input if exists', () => {
-		const input = readInputFile();
+		// const input = readInputFile();
 		
 		
-		const actual = solve(input);
-		console.log({actual});
-		assert.equal(actual, 2)
+		// const actual = solve(input);
+		// console.log({actual});
 	});
 })

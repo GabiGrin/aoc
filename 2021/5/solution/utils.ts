@@ -1,3 +1,5 @@
+import { access } from "fs";
+
 export type P = {x: number, y: number};
 export const id = (p: P) => `${p.x}|${p.y}`;
 

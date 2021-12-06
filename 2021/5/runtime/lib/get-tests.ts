@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from "fs";
+import { range } from "../../solution/utils";
 import { notify } from "./notifier";
 
 const getTestCase = (n) => {
@@ -9,8 +10,7 @@ const getTestCase = (n) => {
 
 export const getTestCases = () => {
     const max = readdirSync(`./tests`).length / 2;
-
-    return 'X'.repeat(max).split('').map((_, i) => {
+    return range(0, max - 1).map((i) => {
         try {
             return getTestCase(i + 1);
         } catch (e) {
