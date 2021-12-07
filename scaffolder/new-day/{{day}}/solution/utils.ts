@@ -61,6 +61,7 @@ export const dirs = {
 };
 
 export const values = <K, V>(map: Map<K, V>) => Array.from(map.values());
+export const keys = <K, V>(map: Map<K, V>) => Array.from(map.keys());
 export const entries = <K, V>(map: Map<K, V>) => Array.from(map.entries());
 
 export type LlNode = {val: any, next?: LlNode};
@@ -108,3 +109,26 @@ export const mapMatrix = <T, K>(mat: Matrix<T>, map: (curr: T, rowIdx: number, c
 		})
 	});
 }
+
+
+export type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any ? A : never;
+
+export const memoize = <T extends Function>(fn: T, keyStrategy = (args: ArgumentTypes<T>) => args.join('-')) => {
+	let cache = new Map();
+	return (...args: ArgumentTypes<T>) => {
+		const key = keyStrategy(args);
+		if (!cache.get(key)) {
+			const r = fn(...args);
+			cache.set(key, r);
+		}
+		return cache.get(key);
+	}
+}
+
+export const sigma = (num) => range(1, num + 1).reduce((a, b) => a + b, 0);
+export const factorial = (num) => range(1, num + 1).reduce((a, b) => a * b, 1);
+
+export const simpleAdd = (a, b) => a + b;
+export const simpleSub = (a, b) => a - b;
+export const simpleMul = (a, b) => a * b;
+export const simpleDiv = (a, b) => a / b;

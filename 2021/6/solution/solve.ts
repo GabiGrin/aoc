@@ -21,7 +21,8 @@ const parseInput = (raw: string) => {
 
 export const solve = (raw: string): any => {
 	const initFish = parseInput(raw);
-	const finalFish = range(256).reduce((currFish) => {
+
+	return range(256).reduce((currFish) => {
 		return currFish.reduce((fish, count, age) => {
 			if (age === 0) {
 				fish[6] = count;
@@ -31,9 +32,8 @@ export const solve = (raw: string): any => {
 			}
 			return fish;
 		}, []);
-	}, initFish);
-
-	return finalFish.reduce((a, b) => a + b);
+	}, initFish)
+	.reduce((a, b) => a + b);
 };
 
 // for wallaby
