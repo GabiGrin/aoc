@@ -1,0 +1,136 @@
+// import { puzzleInput } from "../lib/lib";
+import {assert} from 'chai';
+import { getTestCases } from '../runtime/lib/get-tests';
+import { readInputFile } from '../runtime/lib/input-output-files';
+import { getCell, setCell, values } from './utils';
+
+const parseInput = (raw: string) => {
+	const rows = raw
+		.split('\n')
+		.map(n => n.trim())
+		.filter((v) => !!v)
+		.map(v => {
+			const [, x1, y1, x2, y2] = v.match(/(\d+),(\d+)\s+->\s(\d+),(\d+)/).map(Number);
+			return {l1: {x: x1, y: y1}, l2: {x: x2, y: y2}};
+		});
+		
+
+	return rows;
+}
+
+export const solve = (raw: string): any => {
+	const input = parseInput(raw);
+
+	const ver = input.filter(({l1, l2}) => {
+		return l1.x === l2.x;
+	}).sort((a, b) => b.l1.y - b.l1.y);
+
+	const hor = input.filter(({l1, l2}) => {
+		return l1.y === l2.y;
+	}).sort((a, b) => b.l1.x - b.l1.x);
+	
+
+	let grid = new Map();
+
+	hor.forEach((l, idx) => {
+
+	
+		const from = Math.min(l.l1.x, l.l2.x);
+		const to = Math.max(l.l1.x, l.l2.x);
+		for (let x = from; x <= to; x++) {
+
+			const o = {x, y: l.l1.y};
+			const v = getCell(o, grid) || 0;
+
+			// console.log(o, idx, v + 1);
+			
+			setCell(o, v + 1, grid)
+		}
+	})
+	
+
+	ver.forEach((l, idx) => {
+		const from = Math.min(l.l1.y, l.l2.y);
+		const to = Math.max(l.l1.y, l.l2.y);
+		for (let y = from; y <= to; y++) {
+
+			const o = {x: l.l1.x, y};
+			const v = getCell(o, grid) || 0;
+
+			// console.log(o, idx, v + 1);
+			setCell(o, v + 1, grid)
+		}
+	});
+	
+
+
+	// console.log(grid);
+	
+
+	return values(grid).filter(v => v > 1).length;
+
+
+
+	// return input.length;
+};
+
+// for wallaby
+describe('part 1 tests', () => {
+	it('passes for case 1 if exists', () => {
+		const case1 = getTestCases()[0];
+		if (case1) {
+			const actual = solve(case1.input);			
+			assert.equal(actual, case1.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 2 if exists', () => {
+		const case2 = getTestCases()[1];
+		if (case2) {
+			const actual = solve(case2.input);
+			assert.equal(actual, case2.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 3 if exists', () => {
+		const case3 = getTestCases()[2];
+		if (case3) {
+			const actual = solve(case3.input);
+			assert.equal(actual, case3.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 4 if exists', () => {
+		const case4 = getTestCases()[3];
+		if (case4) {
+			const actual = solve(case4.input);
+			assert.equal(actual, case4.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 5 if exists', () => {
+		const case5 = getTestCases()[4];
+		if (case5) {
+			const actual = solve(case5.input);
+			assert.equal(actual, case5.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes input if exists', () => {
+		// const input = readInputFile();
+		
+		
+		// const actual = solve(input);
+		// console.log({actual});
+	});
+})

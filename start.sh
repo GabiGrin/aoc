@@ -1,16 +1,12 @@
+YEAR=2021
+
 echo Day?
-read day
+read DAY
 
-echo Year?
-read year
+echo Scaffolding for day $DAY of year $YEAR
 
-echo Scaffolding for day $day of year $year
-
-mkdir -p $year
-
-npx scaffolder-cli create new-day day=$day year=$year --entry-point $year
-
-cd $year/$day
+npx scaffolder-cli create new-day day=$DAY year=$YEAR
+cd $day
 
 code .
 
