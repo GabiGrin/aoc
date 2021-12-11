@@ -10,9 +10,9 @@ export const bottomRight = ({ x, y }) => ({ x: x + 1, y: y + 1 });
 export const left = ({ x, y }) => ({ x: x - 1, y });
 export const right = ({ x, y }) => ({ x: x + 1, y });
 
-export const neighbours = [top, left, bottom, right];
+const neighbours = [top, left, bottom, right];
 
-export const diagonals = [topLeft, topRight, bottomLeft, bottomRight];
+const diagonals = [topLeft, topRight, bottomLeft, bottomRight];
 
 export const neighboursWithDiag = [...neighbours, ...diagonals];
 

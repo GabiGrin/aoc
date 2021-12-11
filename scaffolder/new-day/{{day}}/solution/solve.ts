@@ -9,7 +9,9 @@ const parseInput = (raw: string) => {
 		.map(n => n.trim())
 		.filter((v) => !!v)
 		// .map(Number);
+		// .map(v => v.split('').map(Number));
 
+	// return gridFromMatix(rows);
 	return rows;
 }
 

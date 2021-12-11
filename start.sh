@@ -6,7 +6,7 @@ read DAY
 echo Scaffolding for day $DAY of year $YEAR
 
 npx scaffolder-cli create new-day day=$DAY year=$YEAR
-cd $day
+cd $DAY
 
 code .
 
