@@ -24,14 +24,14 @@ export const solve = (raw: string): any => {
 		const toInc = grid.reduce((acc, _, pos) => [...acc, pos], []);
 
 		while (toInc.length) {
-			const currV = toInc.pop();
-			let val = grid.get(currV);
-			grid.inc(currV);
+			const currPos = toInc.pop();
+			let val = grid.get(currPos);
+			grid.inc(currPos);
 			
 			if (val === 9) {
 				flashes++;
 
-				const adj = calcNeighboursWithDiag(currV)
+				const adj = calcNeighboursWithDiag(currPos)
 					.filter(pos => {
 						const v = grid.get(pos);
 						return v < 10 && typeof v === 'number';

@@ -1,9 +1,9 @@
 // import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
-import { nodeModuleNameResolver, validateLocaleAndSetLanguage } from 'typescript';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
 import { gridFromMatix, keys } from './utils';
+import { createGraph } from './utils/graphs';
 import { simpleAdd } from './utils/math';
 
 const node = (name: string) => {
@@ -22,90 +22,44 @@ const parseInput = (raw: string) => {
 		.map((row) => {
 			const [from, to] = row.split('-');
 			return {from, to};
-		});
+		})
+		.reduce((graph, {from, to}) => {
 
+			graph.addNode(from);
+			graph.addNode(to);
+			graph.addConnection(from, to, true);
+
+			return graph;
+		}, createGraph());
 	
-		const nodesMap = new Map<any, any>();
-		const root = node('start');
-
-	rows.forEach(({from, to}) => {
-		const fromNode = nodesMap.get(from) || node(from);
-		const toNode = nodesMap.get(to) || node(to);
-
-		fromNode.children.push(to);
-		toNode.parents.push(from);
-		nodesMap.set(from, fromNode);
-		nodesMap.set(to, toNode);
-	})
-	return {nodesMap};
+	return rows;
 
 }
 
 export const solve = (raw: string): any => {
-	const {nodesMap} = parseInput(raw);
-
-	const root = nodesMap.get('start');
+	const graph = parseInput(raw);
 	
-	const isBig = ((n: string) => n.toUpperCase() === n );
+	const isBigCave = ((n: string) => n.toUpperCase() === n );
+	const hasDoubleSmallCave = (path) => path
+		.filter(c => !isBigCave(c))
+		.some((c, i, arr) => arr.indexOf(c) !== i);
 
-	const findPaths = (curr, visited, smallCaveTwice: {name: string, visited: boolean}, path) => {
-		let newCaveTwice = {...smallCaveTwice};
-		if (visited.has(curr.name)) {			
-			if (newCaveTwice.name === curr.name) {
-				if (newCaveTwice.visited) {
-					return '';
-				} else {
-					newCaveTwice.visited = true;
-				}
-			} else {
-				return '';
-			}
+	const paths = graph.allPaths('start', 'end', (next, path) => {
+		if (next === 'start') {
+			return false;
 		}
-
-		if (curr.name === 'end') {	
-			return path;
+		if (isBigCave(next) || !hasDoubleSmallCave(path)) {			
+			return true;
 		}
-
-		if (!isBig(curr.name)) {
-			visited.add(curr.name);
-		}
-
-		const nextOnes = [...curr.children, ...curr.parents]
-
-		const nextPaths = nextOnes.map(curr => {
-			const n = nodesMap.get(curr);
-			return findPaths(n, new Set(visited), newCaveTwice, path + ',' + curr);
-		});
-
-		return nextPaths
-			.filter(p => p.length > 0)
-			.reduce((a, c) => {
-			if (typeof c === 'object') {
-				return [...a, ...c]
-			} 
-			if (c.length) {
-				return [...a, c]
-			} else {
-				return a
-			}
-		}, []);
-	}
-
-	const smallCaves = keys(nodesMap)
-		.filter(n => !['start', 'end'].includes(n))
-		.filter(n => !isBig(n));
-
-	const paths = smallCaves.map(s => findPaths(root, new Set(), {name: s, visited: false}, []));	
-
-	const combined = paths.reduce((a, c) => {
-		return [...a, ...c];
-	})
-	return new Set(combined).size;
+		return !path.includes(next);
+	});
+	
+	return paths.length;
 };
 
 // for wallaby
 describe('part 1 tests', () => {
-	it.only('passes for case 1 if exists', () => {
+	it('passes for case 1 if exists', () => {
 		const case1 = getTestCases()[0];
 		if (case1) {
 			const actual = solve(case1.input);			
@@ -115,7 +69,7 @@ describe('part 1 tests', () => {
 		}
 	});
 
-	it('passes for case 2 if exists', () => {
+	it.only('passes for case 2 if exists', () => {
 		const case2 = getTestCases()[1];
 		if (case2) {
 			const actual = solve(case2.input);
