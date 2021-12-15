@@ -44,7 +44,14 @@ export const solve = (raw: string): any => {
 		.filter(c => !isBigCave(c))
 		.some((c, i, arr) => arr.indexOf(c) !== i);
 
-	const paths = graph.allPaths('start', 'end', (next, path) => {
+		const paths1 = graph.allPaths('start', 'end', (next, path) => {
+			if (isBigCave(next) || !path.includes(next)) {			
+				return true;
+			}
+
+		});
+
+	const paths2 = graph.allPaths('start', 'end', (next, path) => {
 		if (next === 'start') {
 			return false;
 		}
@@ -54,7 +61,7 @@ export const solve = (raw: string): any => {
 		return !path.includes(next);
 	});
 	
-	return paths.length;
+	return paths2.length;
 };
 
 // for wallaby

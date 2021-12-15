@@ -13,5 +13,11 @@ if (!g.describe) {
 import { solve } from "./solution/solve";
 
 (async () => {
-	console.log('answer is ', solve(readInputFile()));
+	const input = readInputFile();
+	try {
+		console.log('answer is ', await solve(input));
+	} catch (e) {
+		console.error(e);
+	}
+	
 })()
