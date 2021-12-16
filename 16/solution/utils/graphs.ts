@@ -17,11 +17,10 @@ export type Graph<T> = {
     shortestPath: (from: string, to: string, validationStrategy?: GraphTraversalValidationFunction, type?: 'bfs' | 'dfs') => string[],
     allPaths: (from: string, to: string, validationStrategy?: GraphTraversalValidationFunction, type?: 'bfs' | 'dfs') => string[][],
     inner: () => {nodesMap: Map<string, Node<T>>}
-    dijkstra: (from: string, to: string, costFn: (fromNode: Node<T>, toNode: Node<T>) => number, validationStrategy?: GraphTraversalValidationFunction);
 }
 
 
-export const defaultGraphValidationStrategy: GraphTraversalValidationFunction = (nextNodeName, path) => {
+const defaultGraphValidationStrategy: GraphTraversalValidationFunction = (nextNodeName, path) => {
     return !path.includes(nextNodeName);
 }
 
@@ -45,30 +44,6 @@ export const createGraph = <T>(rootName?:string, rootVal?: T) => {
 
         while (nextInLine.length) {
             const {name, path} = type === 'bfs' ? nextInLine.shift() : nextInLine.pop();
-            const currNode = getNode(name);
-
-            if (name === end) {
-                paths.push(path);
-            } else {
-                const next = currNode.children
-                    .filter(childName => validationFn(childName, path, paths))
-                    .map((childName) => {
-                    return {name: childName, path: [...path, childName]}
-                });
-                nextInLine.push(...next);
-            }
-        }
-
-        return paths;
-    }
-
-    const dijkstra = (start: string, end: string, costFn: (n: Node<T>) => number, validationFn) => {
-        const nextInLine = [{name: start, path: [start]}];
-
-        const paths = [];
-
-        while (nextInLine.length) {
-            const {name, path} = nextInLine.shift();
             const currNode = getNode(name);
 
             if (name === end) {
@@ -121,10 +96,7 @@ export const createGraph = <T>(rootName?:string, rootVal?: T) => {
             const [shortest] = paths.sort((a, b) => a.length - b.length);
             return shortest;
         },
-        inner: () => ({nodesMap: map}),
-        dijkstra: (from, to, costFn, strategy = defaultGraphValidationStrategy ) => {
-            
-        }
+        inner: () => ({nodesMap: map})
     }
 
     return graph;
