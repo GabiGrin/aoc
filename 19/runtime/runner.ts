@@ -25,7 +25,7 @@ export const initSolver = async (initialPart: PuzzlePart) => {
 
     setLastState(initialPart);
 
-    // client.openRiddleInBrowser();
+    client.openRiddleInBrowser();
 
     const trySolvingTestCases = async () => {
       notify(`Running part ${currentPart} tests..`);
