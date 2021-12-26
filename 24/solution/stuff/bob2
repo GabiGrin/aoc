@@ -1,0 +1,107 @@
+
+29638142427219
+
+
+const P1 = [  1,  1,  1,  1,  1,  26,  26,  1, 26,  1, 26, 26,  26, 26 ]
+const P2 = [ 14, 14, 14, 12, 15, -12, -12, 12, -7, 13, -8, -5, -10, -7 ]
+const P3 = [ 14,  2,  1, 13,  5,   5,   5,  9,  3, 13,  2,  1,  11,  8 ]
+
+
+
+
+29638142427219
+
+const 
+
+/* Digit 1   |   Digit 2   |   Digit 3 
+
+z = 0 
+P1 =  1
+P2 = 14
+P3 = 14
+
+
+----
+After digit 1 and z [0]
+
+z = [Digit + 14] -> 1...9 ==> 15...23
+
+z ranges = [15...23]
+----
+
+After digit 2 and z [15...23]
+
+something = [15..23] + 14
+
+z =  26 * z + digit + 2
+
+z ranges = [ 390, 416, 442, 468, 494, 520, 546, 572 ] + [ 1 .. 9 ] + 2
+---
+
+After digit 3 and: z = (26 * z{15...23}) + digit + 2
+
+something = ((26 * z{15...23}) + digit{1..9} + 2) % 26) + 1
+
+
+
+---
+---
+---
+
+Digit 13, needs to RETURN [8...16]: P1 = 26 | P2 = -10 | P3 = 11
+
+
+const something = (z % 26) + -10;
+const somethingElse = Math.floor(z / 26);
+
+if (something == digit) {
+    z = 11 ... 19
+    d =  1 ...  9
+    return somethingElse;  // 26 * [8 ... 16]
+} else {
+    return 26 * somethingElse + (digit + 11)
+}
+
+
+
+---
+
+Digit 14, needs to RETURN 0: P1 = 26 | P2 = -7 | P3 = 8
+
+z < 26
+( z % 26 ) + -7 === digit
+( z % 26 ) === [1...9] + 7
+z = 8...16
+
+const something = (z % 26) + -7;
+    const somethingElse = Math.floor(z / 26);
+
+    if (something == digit) {
+        return somethingElse;
+    } else {
+        return 26 * somethingElse + (digit + P3)
+    }
+
+---- 
+export const calcNumP1_26 = (digit, z, P2, P3) => {
+    const something = (z % 26) + P2;
+    const somethingElse = Math.floor(z / 26);
+
+    if (something == digit) {
+        return somethingElse;
+    } else {
+        return 26 * somethingElse + (digit + P3)
+    }
+}
+
+export const calcNumP1_1 = (digit, z, P2, P3) => {
+	const something = (z % 26) + P2;
+
+	if (something == digit) {
+		return z;
+	} else {
+		return 26 * z + (digit + P3)
+	}
+}
+
+

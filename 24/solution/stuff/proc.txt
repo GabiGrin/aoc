@@ -1,0 +1,294 @@
+
+w=first digit
+
+inp w    | w = D1 
+mul x 0  | x = 0
+add x z  | x = 0 | 0 + 0
+mod x 26 | x = 0
+div z 1  | z = 0
+add x 14 | x = 14  
+eql x w  | x = 0   | 14 === D1 ? 1 : 0
+eql x 0  | x = 1   | 0 === 0 
+mul y 0  | y = 0
+add y 25 | y =25
+mul y x  | y = 25 | y = 25 * 1
+add y 1  | y = 26
+mul z y  | z = 0
+mul y 0  | y = 0
+add y w  | y = first digit
+add y 14 | y = D1 + 14
+mul y x  | y = D1 + 14  | (D1 + 14) * 1
+add z y  | z = D1 + 14
+
+inp w    | w = D2
+mul x 0  | x = 0
+add x z  | x = D1 + 14
+mod x 26 | x = D1 + 14 | ((D1+14) % 26) = D1 + 14
+div z 1  | z = D1 + 14
+add x 14 | x = D1 + 28
+eql x w  | x = 0  | D1 + 28 === D2  = false ? 1 : 0  |  
+eql x 0  | x = 1 
+mul y 0  | y = 0
+add y 25 | y = 25
+mul y x  | y = 25
+add y 1  | y = 26
+mul z y  | z = (D1 + 14) * 26
+mul y 0  | y = 0
+add y w  | y = D2
+add y 2  | y = D2 + 2
+mul y x  | y = (D2 +2) * (((D1 + 14) % 26) + 14)
+add z y  | ((D1 + 14) * 26) + (D2 +2) * (((D1 + 14) % 26) + 14)
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 14
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 15
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 5
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 5
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 5
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 12
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 9
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -7
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 3
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 1
+add x 13
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 13
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -8
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 2
+mul y x
+add z y
+
+inp w
+mul x 0
+add x z
+mod x 26
+div z 26
+add x -5
+eql x w
+eql x 0
+mul y 0
+add y 25
+mul y x
+add y 1
+mul z y
+mul y 0
+add y w
+add y 1
+mul y x
+add z y
+
+inp w     | w = D13
+mul x 0   | x = 0
+add x z   | x = Z
+mod x 26  | x = Z % 26
+div z 26  | z = Z / 26
+add x -10 | x = (Z % 26) - 10
+eql x w   | ---
+eql x 0   | --- 
+mul y 0   | ---
+add y 25  | y = 25
+mul y x   | y = 0 OR 25
+add y 1   | y = 1 OR 26
+mul z y   | z = (Z / 26) * ( 1 OR 26 )
+mul y 0   | ---
+add y w   | ---
+add y 11  | y = D13 + 11
+mul y x   | y = D13 + 11
+add z y   | z = (Z / 26) * ( 1 OR 26 )
+
+
+---
+(Z % 26) - 7 === D14
+Z % 26 = D14 + 7
+Z % 26 = [1..9] + 7
+Z % 26 = 8..16
+
+Z = [8...16] [34..42] [...60..68]
+
+---
+
+inp w    | w = D14
+mul x 0  | x = 0
+add x z  | x = Z
+mod x 26 | x = Z % 26
+div z 26 | z = Z / 26 
+add x -7 | x = (Z % 26) - 7 |  (Z % 26) - 7 === D14
+eql x w  | x = (Z % 26) - 7 === D14  ? 1 : 0
+eql x 0  | x = (Z % 26) - 7 === D14) ? 0 : 1
+mul y 0  | y = 0
+add y 25 | y = 25 
+mul y x  | y = 0 OR 25 | x be 0
+add y 1  | y = 1 OR 26 | y be 1
+mul z y  | z = (Z / 26) * ( 1 OR 26 )
+mul y 0  | 
+add y w  | y = D14
+add y 8  | y = D14 + 8
+mul y x  | y = (D14 + 8) * ( 0 OR 1) 
+add z y  | z = (Z / 26) * ( 1 OR 26 ) + (D14 + 8) | 
+
+Y must be 1
+x must be
+
+ Z % 26 - 8 === D14
+ Z % 26 - 8 === [1...9]
+ Z % 26 === [1...9] + 8
+ Z % 26 ==== 9...17
+
+ Z = -9..-17                         [9 .. 17]
+(Z / 26) * ( 1 OR 26 ) + (D14 + 8) === 0
+
+means:
+Z % 26 - 8 === D14
+ Z = -9..-17       
