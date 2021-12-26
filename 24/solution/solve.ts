@@ -24,7 +24,6 @@ export const matchLoosely = (n1, n2) => {
 export const solve = (str: string) => {
 	const program = parseInput(str);
 
-
 	const parts = chunk(program, 18);
 
 	const pattern = 'abcdedcdcdcba'.split('');
@@ -39,24 +38,14 @@ export const solve = (str: string) => {
 		}
 	});
 
-
 	const calcDigit = (z, d, i) => {
 		return singleDigit(d, z, parts[i])
 	}
 
 	const found = [];
 
-	let i = 0;
-
 	while (queue.length) {
 		const curr = queue.pop();
-
-
-		if (i++ % 10000 === 0) {
-			// console.log(queue.length);
-			
-		}
-
 		const map = new Map(curr.map);
 
 		const patternPos = pattern[curr.idx];
@@ -74,12 +63,6 @@ export const solve = (str: string) => {
 		const mapVal = map.get(patternPos);
 
 		if (mapVal && !matchLoosely(mapVal, z)) {
-
-					// if (mapVal && mapVal === z) {
-			// console.log('in a good position with', curr.total);
-					// }
-		// } else  {
-			// console.log('found bad', curr.total);
 			continue;
 		}
 
@@ -104,17 +87,7 @@ export const solve = (str: string) => {
 		
 	}
 
-	console.log(found.map(f => f.total).sort().reverse());
-	const nums = Math.min(...found.map(f => Number(f.total)));
-
-	console.log({nums});
-	
-
-	
-
-		
-	
-
+	return Math.min(...found.map(f => Number(f.total)));
 }
 
 describe('part 1 tests', () => {
