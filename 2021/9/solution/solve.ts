@@ -1,87 +1,56 @@
 // import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
-import { access } from 'fs';
-import { visitEachChild } from 'typescript';
+import { validateLocaleAndSetLanguage } from 'typescript';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
-import { bottom, left, reduceMatrix, right, top, setCell, id, entries, fromId, getCell, simpleAdd, values } from './utils';
+import { calcNeighbours, gridFromMatix, id, Vector, vectorEquals } from './utils';
 
 const parseInput = (raw: string) => {
 	const rows = raw
 		.split('\n')
 		.map(n => n.trim())
 		.filter((v) => !!v)
-		.map(r => r.split('').map(Number));
+		// .map(Number);
+		.map(v => v.split('').map(Number));
 
-	const grid = rows.reduce((grid, row, y) => {
-			return row.reduce((grid, cell, x) => {
-				return setCell({x, y}, cell, grid)
-			},grid);
-		}, new Map());
-
-	const height = rows.length;
-	const width = rows[0].length;
-	return {width, height, grid};
-	
+	return gridFromMatix(rows);
 }
 
 export const solve = (raw: string): any => {
-	const {grid, width, height} = parseInput(raw);
-
-	const neighs = [left, top, right, bottom];
-
-	const isValid = ({x, y}) => {
-		return (x >= 0 && x < width) && (y >= 0 && y < height);
-	}
-
-	const lowPoints = entries(grid).reduce((acc, [id, currVal]) => {
-		const pos = fromId(id);
-		const neigh = neighs
-			.map(fn => fn(pos))
-			.filter(p => isValid(p))
-			.map(p => getCell(p, grid));
-
-		const valid = neigh.every(c => c >= currVal && currVal !== 9)
-
-		return valid ? [...acc, pos] : acc;
+	const grid = parseInput(raw);
+	const lowPoints = grid.reduce((acc, v, p) => {
+		const low = calcNeighbours(p).every(n => {
+			const nv = grid.get(n, 9);
+			return v < nv;
+		})
+		return low ? [...acc, p] : acc; 
 	}, []);
 
-	const getBasin = (currPos, visited) => {
-		const curr = getCell(currPos, grid);
-
-		if (visited.has(id(currPos))) {
+	const getBasin = (p: Vector, vis: Set<any>): Vector[] => {
+		// const val = grid.get(p);
+		if (vis.has(id(p))) {
 			return [];
 		}
+		vis.add(id(p));
 
-		visited.add(id(currPos));
+		const toVisit = calcNeighbours(p).filter((np) => {
+			const nv = grid.get(np, 9);
+			return nv !== 9 && !vis.has(id(np));
+		});
 
-		const candidates = neighs
-			.map(f => f(currPos))
-			.filter(p => isValid(p))
-			.filter(p => !visited.has(id(p)))
-			.filter(p =>  getCell(p, grid) !== 9)
-			.filter(p => {
-				const v = getCell(p, grid);
-				return  v > curr;
-			});
-	
-
-		return candidates.reduce((acc, pos) => {
-			const child = getBasin(pos, visited);
-			return [...acc, ...child];
-		}, [currPos]);
+		return [...toVisit.reduce((acc, vp) => {
+			const bas = getBasin(vp, vis);
+			return [...acc, ...bas];
+		}, [p])];
 	}
+
+	const basins = lowPoints.map(lp => getBasin(lp, new Set()));
+	const sizes = basins.map(b => b.length);
+	const sorted = sizes.sort((a,b) => b - a);
 	
-	const basins = lowPoints.map(v => getBasin(v, new Set()));
+	const [first, second, third] = sorted;
 
-	const sizes = basins.map( b => b.length);
-	sizes.sort((a, b) => b - a);
-
-	const [first, second, third] = sizes;
-	
-	const r = first * second * third;
-
-	return r;
+	return first * second * third;
 };
 
 // for wallaby
@@ -136,13 +105,12 @@ describe('part 1 tests', () => {
 		}
 	});
 
-	it.only('passes input if exists', () => {
+	it('passes input if exists', () => {
 		const input = readInputFile();
 		
+		
 		const actual = solve(input);
-		console.log({actual}); //964712
-		assert.notEqual(actual, 414120);
-		assert.notEqual(actual, 1044111);
-		assert.notEqual(actual, 1150464);
+		assert.notEqual(actual, '1035500')
+		// console.log({actual});
 	});
 })

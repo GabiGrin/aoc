@@ -1,5 +1,4 @@
 import { readdirSync, readFileSync } from "fs";
-import { seq } from "../../solution/utils";
 import { notify } from "./notifier";
 
 const getTestCase = (n) => {
@@ -10,7 +9,8 @@ const getTestCase = (n) => {
 
 export const getTestCases = () => {
     const max = readdirSync(`./tests`).length / 2;
-    return seq(max).map((i) => {
+
+    return 'X'.repeat(max).split('').map((_, i) => {
         try {
             return getTestCase(i + 1);
         } catch (e) {
@@ -24,15 +24,6 @@ export const getTestCases = () => {
             return false;
         }
 
-        if (input !== 'TBD' && !expected) {
-            notify(`You haven't entered an expected value for case ${n} but enterred an input. This is probably a mistake. Fix this.`);
-            return false;
-        }
-
-        if (!input) {
-            notify(`You've erased input for case ${n}. This might be a mistake.. To skip it leave it "TBD" and leave the output empty`);
-            return false;
-        }
         return input !== 'TBD';
     });
 }

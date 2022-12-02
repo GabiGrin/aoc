@@ -14,25 +14,24 @@ const parseInput = (raw: string) => {
 }
 
 export const solve = (raw: string): any => {
-	const initGrid = parseInput(raw);
+	let grid = parseInput(raw);
 
+	let allFlashed = false;
 
-	let grid = initGrid;
-	return range(1, 1000).reduce((allFlashStep, step) => {
+	let step = 1;
+	while(!allFlashed) {
+		let flashes = 0;
 		const toInc = grid.reduce((acc, _, pos) => [...acc, pos], []);
 
-		let flashes = 0;
-
-		while (toInc.length && !allFlashStep) {
-
-			const currV = toInc.pop();
-			let val = grid.get(currV);
-			grid.inc(currV);
+		while (toInc.length) {
+			const currPos = toInc.pop();
+			let val = grid.get(currPos);
+			grid.inc(currPos);
 			
 			if (val === 9) {
 				flashes++;
 
-				const adj = calcNeighboursWithDiag(currV)
+				const adj = calcNeighboursWithDiag(currPos)
 					.filter(pos => {
 						const v = grid.get(pos);
 						return v < 10 && typeof v === 'number';
@@ -43,12 +42,10 @@ export const solve = (raw: string): any => {
 
 		grid = grid.map(v => v > 9 ? 0 : v);
 
-		if (!allFlashStep && flashes === 100) {
-			return step;
-		}
-
-		return allFlashStep;
-	}, 0);
+		allFlashed = flashes === 100;
+		step++;
+	}
+	return step;
 
 };
 

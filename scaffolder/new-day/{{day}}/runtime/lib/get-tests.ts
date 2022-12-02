@@ -20,7 +20,7 @@ export const getTestCases = () => {
     })
     .filter(({input, expected, n}) => {
         if (input === 'TBD' && expected) {
-            notify(`You haven't entered an input for case ${n} but enterred an expected value. This is probably a mistake. Fix this.`);
+            notify(`You haven't entered an input for case ${n} but entered an expected value. This is probably a mistake. Fix this.`);
             return false;
         }
 

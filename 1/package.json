@@ -1,14 +1,15 @@
 {
-  "name": "aoc-1-2021",
+  "name": "aoc-1-2022",
   "version": "1.0.0",
   "description": "",
   "aoc": {
     "day": "1",
-    "year": "2021"
+    "year": "2022"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "solve": "ts-node manual-solution.ts"
   },
   "author": "",
   "license": "ISC",

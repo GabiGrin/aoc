@@ -9,8 +9,9 @@ import { notify } from "./lib/notifier";
 import { runTests } from "./lib/run-tests";
 import { readInputFile, writeOutputFile } from "./lib/input-output-files";
 import { setLastState } from "./lib/last-state";
-import { resetTests } from "./lib/reset-tests";
+import { resetTestsOutputs } from "./lib/reset-tests-outputs";
 import { backupPart1Solution } from "./lib/backup-part1-solution";
+import { debounce } from "./lib/debouce";
 
 const config = getPuzzleConfig();
 
@@ -23,6 +24,8 @@ export const initSolver = async (initialPart: PuzzlePart) => {
     let currentPart = initialPart;
 
     setLastState(initialPart);
+
+    // client.openRiddleInBrowser();
 
     const trySolvingTestCases = async () => {
       notify(`Running part ${currentPart} tests..`);
@@ -46,7 +49,7 @@ export const initSolver = async (initialPart: PuzzlePart) => {
       if (!total) {
         notify(`No valid fixtures found yet. Not running`);
       } else if (passing === total) {
-        notify(`${emojis} SUCCESS -All ${total} test(s) passing!`);
+        notify(`${emojis} SUCCESS! All ${total} test(s) are passing!`);
 
         notify(`Going to solve main input.txt`);
 
@@ -69,9 +72,9 @@ export const initSolver = async (initialPart: PuzzlePart) => {
               notify(`✅⭐️⭐️ Part 2 Completed! You rock! You may safely resume your life now`);
               resolve();
             } else {
-              resetTests();
+              resetTestsOutputs();
               backupPart1Solution();
-              notify(`✅⭐️ Part 1 Completed! Tests reset and solution backed-up. Good luck!`);
+              notify(`✅⭐️ Part 1 Completed! Tests reset and solution backed-up. Opening browser! Good luck on next part!`);
               currentPart = '2';
               setLastState(currentPart)
             }
@@ -99,12 +102,14 @@ export const initSolver = async (initialPart: PuzzlePart) => {
     // whenever a fixture or solution runs, a solution attempt will be made
     await trySolvingTestCases();
 
+    const debouncedTrySolvingTestCases = debounce(trySolvingTestCases, 200);
+
     chokidar
       .watch(["tests", "solution"], {
         ignoreInitial: true,
       })
       .on("all", async () => {
-        await trySolvingTestCases();
+        await debouncedTrySolvingTestCases();
       });
   });
 };

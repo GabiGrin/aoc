@@ -1,6 +1,5 @@
 // import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
-import { cursorTo } from 'readline';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
 
@@ -9,41 +8,52 @@ const parseInput = (raw: string) => {
 		.split('\n')
 		.map(n => n.trim())
 		.filter((v) => !!v)
-		.map(v => {
+		.map((row) => {
+			const [f,t] = row.split(' ');
+			const fi = ['A', 'B', 'C'].indexOf(f);
+			const ti = ['X', 'Y', 'Z'].indexOf(t);
+			const b = ['r','p', 's'];
+			return {f: b[fi], t: b[ti]};
 			
-			const [t, d] = v.split(' ');
-			console.log(d);
-			
-			return {t, d: Number(d)}
-		});
+		})
+		// .map(Number);
+		// .map(v => v.split('').map(Number));
 
-
+	// return gridFromMatix(rows);
 	return rows;
 }
 
 export const solve = (raw: string): any => {
-	const input = parseInput(raw);
 
-	const depth = input.reduce((a, cur) => {
-		console.log(cur);
+
+	const scoreitem = {r: 1, p: 2, s: 3};
+	const scoreres = {d: 3, w: 6};
+	
+	const input = parseInput(raw)
+
+	return input.reduce((score, curr) => {
+
+		const {f, t} = curr;
+
+		score += scoreitem[t];
+
+		let b = 0;
+		if (f === t) b = 3;
+
+		if (f === 'p' && t ==='s') b = 6;
+		if (f === 'r' && t ==='p') b = 6;
+		if (f === 's' && t ==='r') b = 6;
+
+		console.log(b, score);
+
+		return score + b;
+
 		
-		if (cur.t === 'up') {
-			return a - cur.d
-		} else if (cur.t === 'down') {
-			return a + cur.d;
-		}
-		return a;
-	}, 0);
-
-	const hor = input.reduce((a, cur) => {
-		if (cur.t == 'forward') {
-			return a + cur.d;
-		}
-		return a;
-	},0 )
+		
+	},0);
 
 
-	return depth * hor;
+	return input.length;
 };
 
 // for wallaby

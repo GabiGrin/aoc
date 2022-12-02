@@ -1,6 +1,5 @@
 // import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
-import { cursorTo } from 'readline';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
 
@@ -9,28 +8,69 @@ const parseInput = (raw: string) => {
 		.split('\n')
 		.map(n => n.trim())
 		.filter((v) => !!v)
-		.map(v => {
-			const [t, d] = v.split(' ');
-			return {t, d: Number(d)}
-		});
+		.map((row) => {
+			let [f,t] = row.split(' ');
+			const fi = ['A', 'B', 'C'].indexOf(f);
+			const ti = ['X', 'Y', 'Z'].indexOf(t);
+			const b = ['r','p', 's'];
 
+			f = b[fi]
+			let g = '';
+			if (t === 'X') {
+				if (f === 'p') g = 'r'
+				if (f === 's') g = 'p'
+				if (f === 'r') g = 's'
+			} else if (t === 'Y') {
+				g = b[fi]
+			} else {
+				if (f === 'p') g = 's'
+				if (f === 's') g = 'r'
+				if (f === 'r') g = 'p'
+			}
+
+			
+
+			return {f: b[fi], t: g};
+			
+		})
+		// .map(Number);
+		// .map(v => v.split('').map(Number));
+
+	// return gridFromMatix(rows);
 	return rows;
 }
 
 export const solve = (raw: string): any => {
-	const input = parseInput(raw);
 
-	const {depth, hor} = input.reduce((a, cur) => {		
-		if (cur.t === 'up') {
-			return {...a, aim: a.aim - cur.d};
-		} else if (cur.t === 'down') {
-			return {...a, aim: a.aim + cur.d};
-		}
 
-		return {...a, hor: a.hor + cur.d, depth: a.depth + a.aim * cur.d};
-	}, {aim: 0, depth: 0, hor: 0});
+	const scoreitem = {r: 1, p: 2, s: 3};
+	const scoreres = {d: 3, w: 6};
+	
+	const input = parseInput(raw)
 
-	return depth * hor;
+	return input.reduce((score, curr) => {
+
+		const {f, t} = curr;
+
+		score += scoreitem[t];
+
+		let b = 0;
+		if (f === t) b = 3;
+
+		if (f === 'p' && t ==='s') b = 6;
+		if (f === 'r' && t ==='p') b = 6;
+		if (f === 's' && t ==='r') b = 6;
+
+		console.log(b, score);
+
+		return score + b;
+
+		
+		
+	},0);
+
+
+	return input.length;
 };
 
 // for wallaby
@@ -86,10 +126,10 @@ describe('part 1 tests', () => {
 	});
 
 	it('passes input if exists', () => {
-		// const input = readInputFile();
+		const input = readInputFile();
 		
 		
-		// const actual = solve(input);
-		// console.log({actual});
+		const actual = solve(input);
+		console.log({actual});
 	});
 })

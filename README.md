@@ -1,22 +1,32 @@
-# Advent of code solutions + template 
+# Advent of Code Runner, Solver, and Solutions
 
-### Warning: some of the code didn't get proper refactoring after submission and will be very ugly to read! wear mutation-and-for-loop goggles.
+- A [scaffolder](https://github.com/galElmalah/scaffolder) template that includes a CLI helper + useful library for solving AoC using 
+TypeScript. Uses 
+- My solutions
+
+_Note: most solution code is committed as-is, and is optimized for solution speed and nothing else. This means mutations, loops, and many other things I'll never do in production code :)_
+
+
+## Features
+- Auto downloads input file 
+- Auto submits the real answer once test cases pass
+- if the real submission fails, auto-submit will stop for the day (saved in .aoc file)
+- Once part 1 is completed it'll auto-backup your solution and reset test outputs
+- Built-in common utils (vectors, math, graphs, matrices) 
+- [WallabyJS](https://wallabyjs.com/) support
+
 
 ## Using the template + runtime
-1. npm install in root
+1. npm install in the root folder
 2. `AOC_SESSION=[your-session] npm start`
-3. choose day and year
-4. solver will start running
+3. choose the day
+4. the solver will start running
 5. put some tests cases in the tests folder (expected input and outputs in relevant files)
 6. go to `solve.ts` and start hacking! Once your tests pass, it'll try to submit the solution automatically
 
-Note: to run it afterwards just `AOC_SESSION=[your-session] npm start` to start the runtime
+Note: to run it afterward just `AOC_SESSION=[your-session] npm start` to start the runtime
 
-ProTip™ - add to your bashsrc/zshrc `export AOC_SESSION="[session here"]` to avoid having to pass the session explicitly. Remember to remove it afterwards though.
-## Template Runtime Features
-1. Auto download input as soon as it's ready
-2. Auto runs tests in tests folder
-3. Once tests pass, a submission will be made with your real input! if it fails, auto-submit will stop for the day (saved in .aoc file)
-4. Once part1 is completed it'll auto backup your solution and reset tests!
+**ProTip™** - add to your `bashsrc`/`zshrc` `export AOC_SESSION="[session here"]` to avoid having to pass the session explicitly. Remember to remove it afterward though.
+
 
 

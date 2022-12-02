@@ -9,9 +9,15 @@ import { solve } from "../../../solution/solve";
 
 process.on("message", (message) => {
   if (message.solve) {
-    const res = solve(message.solve);
-    process.send({
-      solution: res,
-    });
+    try {
+      const res = solve(message.solve);
+      process.send({
+        solution: res,
+      });
+    } catch (e) {
+      process.send({
+        error: e
+      })
+    }
   }
 });

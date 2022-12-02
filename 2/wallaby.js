@@ -2,7 +2,7 @@ module.exports = function (w) {
 
 	return {
 	  files: [
-		'solution/*.ts',
+		'solution/**/*.ts',
 		'input.txt',
 		{pattern: 'tests/**', instrument: false},
 		'runtime/**/*.ts',

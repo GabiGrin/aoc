@@ -1,32 +1,36 @@
 // import { puzzleInput } from "../lib/lib";
 import {assert} from 'chai';
+import { createInputFiles } from 'typescript';
 import { getTestCases } from '../runtime/lib/get-tests';
-
-
 import { readInputFile } from '../runtime/lib/input-output-files';
 
 const parseInput = (raw: string) => {
 	const rows = raw
-		.split('\n')
-		.map(n => n.trim())
+		.split('\n\n')
+		.map(n => {
+			return n.split('\n').map(Number).reduce((a,c) => a +c);
+		})
 		.filter((v) => !!v)
-		.map(Number);
+		// .map(Number);
+		// .map(v => v.split('').map(Number));
 
+	// return gridFromMatix(rows);
 	return rows;
 }
 
 export const solve = (raw: string): any => {
-	const input = parseInput(raw);
+	let input = parseInput(raw);
 
+	// console.log(input);
+	input = input.sort((a, b) => a > b ? 1 : -1);
 
-	const sums = [];
-	for (let i = 2; i < input.length; i++) {
-		const s  = input[i]  + input[i - 1] + input[i - 2];
-		sums.push(s);
-	}
-	return sums.reduce((a, b, i, arr) => {
-		return  b > arr[i -1] ? a + 1 : a;
-	}, 0)
+	console.log(input);
+	
+	return input.slice(-3).reduce((a, c) => a +c);
+	return Math.max(...input);
+	
+
+	return input.length;
 };
 
 // for wallaby

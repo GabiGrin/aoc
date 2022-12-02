@@ -22,7 +22,7 @@ export const initInputDownloader = async (client: AocClient) => {
             return false;
           }
         } else {
-          notify(`Input is not ready yet, trying again in ${RETRY_TIME / 1000} seconds`);
+          // notify(`Input is not ready yet, trying again in ${RETRY_TIME / 1000} seconds`);
           return false;
         }
       };

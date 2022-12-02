@@ -4,7 +4,7 @@ import { backupPart1Solution } from "./runtime/lib/backup-part1-solution";
 import { getLastState, setLastState } from "./runtime/lib/last-state";
 import { notify } from "./runtime/lib/notifier";
 import { getPuzzleConfig } from "./runtime/lib/puzzle-config";
-import { resetTests } from "./runtime/lib/reset-tests";
+import { resetTestsOutputs } from "./runtime/lib/reset-tests-outputs";
 import { initSolver } from "./runtime/runner";
 
 const config = getPuzzleConfig();
@@ -26,7 +26,7 @@ initInputDownloader(client)
         
         if (state !== lastState) {
             notify(`Looks like you have solved part 1 outside of the AoC-Runner™, resetting tests!`);
-            resetTests();
+            resetTestsOutputs();
             backupPart1Solution();
         }
         notify(`Input is taken care of. Starting tests solver on part ${state}. Good luck!`)

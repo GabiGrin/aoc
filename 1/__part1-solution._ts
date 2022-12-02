@@ -5,25 +5,26 @@ import { readInputFile } from '../runtime/lib/input-output-files';
 
 const parseInput = (raw: string) => {
 	const rows = raw
-		.split('\n')
-		.map(n => n.trim())
+		.split('\n\n')
+		.map(n => {
+			return n.split('\n').map(Number).reduce((a,c) => a +c);
+		})
 		.filter((v) => !!v)
-		.map(Number);
+		// .map(Number);
+		// .map(v => v.split('').map(Number));
 
+	// return gridFromMatix(rows);
 	return rows;
 }
 
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
 
-	return input.reduce((a, b, i, arr) => {
-		if (i - 1 > -1) {
-			const inc = b > arr[i -1];
+	// console.log(input);
+	return Math.max(...input);
+	
 
-			return inc ? a + 1 : a;
-		}
-		return 0;
-	}, 0)
+	return input.length;
 };
 
 // for wallaby

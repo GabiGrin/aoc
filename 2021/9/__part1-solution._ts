@@ -2,40 +2,29 @@
 import {assert} from 'chai';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
-import { bottom, left, reduceMatrix, right, top, setCell } from './utils';
+import { calcNeighbours, gridFromMatix } from './utils';
 
 const parseInput = (raw: string) => {
 	const rows = raw
 		.split('\n')
 		.map(n => n.trim())
 		.filter((v) => !!v)
-		.map(r => r.split('').map(Number))
+		// .map(Number);
+		.map(v => v.split('').map(Number));
 
-	return rows;
+	return gridFromMatix(rows);
 }
 
 export const solve = (raw: string): any => {
-	const input = parseInput(raw);
-
-	return reduceMatrix(input, (acc, curr, x, y) => {
-		const neigh = [top, left, right, bottom]
-			.map(fn => fn({x, y}))
-			.map(({x, y}) => {
-				if (input[x]) {
-					return input[x][y];
-				}
-				return undefined;
-			})
-			.filter(cell => {
-				return typeof cell !== 'undefined';
-			});
-
-		const valid = neigh.every(c => c > curr);
-
-		return valid ? acc + (curr + 1) : acc;
-
-	}, 0)
-
+	const grid = parseInput(raw);
+	return grid.reduce((acc, v, p) => {
+		const low = calcNeighbours(p).every(n => {
+			const nv = grid.get(n, 9);
+			return v < nv;
+		})
+		return low ? v + 1 + acc : acc; 
+	}, 0);
+	
 };
 
 // for wallaby

@@ -13,6 +13,8 @@ import { resetTestsOutputs } from "./lib/reset-tests-outputs";
 import { backupPart1Solution } from "./lib/backup-part1-solution";
 import { debounce } from "./lib/debouce";
 
+const SOLUTION_DEBOUNCE = 200;
+
 const config = getPuzzleConfig();
 
 const client = createAocClient(config);
@@ -102,7 +104,7 @@ export const initSolver = async (initialPart: PuzzlePart) => {
     // whenever a fixture or solution runs, a solution attempt will be made
     await trySolvingTestCases();
 
-    const debouncedTrySolvingTestCases = debounce(trySolvingTestCases, 200);
+    const debouncedTrySolvingTestCases = debounce(trySolvingTestCases, SOLUTION_DEBOUNCE);
 
     chokidar
       .watch(["tests", "solution"], {
