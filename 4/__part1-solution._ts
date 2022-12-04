@@ -8,8 +8,12 @@ const parseInput = (raw: string) => {
 		.split('\n')
 		.map(n => n.trim())
 		.filter((v) => !!v)
-		.map(r => {
-			return r;
+		.map(v => {
+
+			const [p1, p2] = v.split(',');
+
+			return [p1.split('-').map(Number), p2.split('-').map(Number)]
+			
 		})
 		// .map(Number);
 		// .map(v => v.split('').map(Number));
@@ -20,6 +24,24 @@ const parseInput = (raw: string) => {
 
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
+
+	console.log();
+	
+
+	return input.filter((r) => {
+		const [a, b] = r;
+
+		const cnt = (x, y) => {
+
+			return y[0] >= x[0] && y[1] <= x[1];
+		}
+
+		return cnt(a,b) || cnt(b,a);
+		
+		
+		
+	}).length;
+	
 
 	return input.length;
 };
