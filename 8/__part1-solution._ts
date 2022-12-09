@@ -2,6 +2,9 @@
 import {assert} from 'chai';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
+import { gridFromMatix, isDefined, range } from './utils';
+
+
 
 const parseInput = (raw: string) => {
 	const rows = raw
@@ -9,51 +12,61 @@ const parseInput = (raw: string) => {
 		.map(n => n.trim())
 		.filter((v) => !!v)
 		.map(r => {
-			return r;
+			return r.split('').map(Number);
 		})
 		// .map(Number);
 		// .map(v => v.split('').map(Number));
 
-	// return gridFromMatix(rows);
-	return rows;
+	return gridFromMatix(rows);
+	// return rows;
 }
 
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
 
-	const line = input[0].split('');
+	console.log(input);
 
-	for (let i = 14; i < line.length; i++) {
-		const last4 = line.slice(i-14, i);
-		const set = new Set(last4)
-		if (set.size === 14) {
-			return i;
-		}
-	}
-};
 
-export const solve2 = (raw: string): any => {
-	const input = parseInput(raw);
+	const width = input.width();
+	const height = input.width();
 
-	const line = input[0].split('');
 
+	return input.reduce((count, val, pos, grid) => {
+
+		const isVisibleLeft = range(0, pos.x).every((x) => {
+			if (x === pos.x) return true;
+			return grid.get({...pos, x}) < val;
+		});
+
+		const isVisibleRight = range(pos.x, width).every((x) => {
+			if (x === pos.x) return true;
+			const v = grid.get({...pos, x});
+			if (!isDefined(v)) return true;
+			return grid.get({...pos, x}) < val;
+		});
+
+		const isVisibleTop = range(0, pos.y).every((y) => {
+			if (y === pos.y) return true;
+			const v = grid.get({...pos, y});
+			if (!isDefined(v)) return true;
+			return grid.get({...pos, y}) < val;
+		});
+
+		const isVisibleBottom = range(pos.y, height).every((y) => {
+			if (y === pos.y) return true;
+			const v = grid.get({...pos, y});
+			if (!isDefined(v)) return true;
+			return grid.get({...pos, y}) < val;
+		});
+
+		const isVisible = isVisibleLeft || isVisibleRight || isVisibleBottom || isVisibleTop;
+
+		return isVisible ? count + 1 : count;
+		
+	}, 0)
 	
 
-	const map = new Map();
-	
-	for (let i = 0; i < line.length; i++) {
-		const values = Array.from(map.values()).filter((v => v === 1));
-		
-		if (values.length === 14) {
-			return i;
-		}
-		const curr = line[i];
-		const last = line[i-14];
-		
-		map.set(curr, (map.get(curr) || 0) + 1);
-		map.set(last, (map.get(last) || 0) - 1);
-	}
-
+	// return input.length;
 };
 
 // for wallaby
@@ -109,25 +122,10 @@ describe('part 1 tests', () => {
 	});
 
 	it('passes input if exists', () => {
-		const input = readInputFile();
+		// const input = readInputFile();
 		
 		
-		const time = Date.now();
-		for (let i = 0; i < 1000; i++) {
-			const actual = solve(input);
-		}
-		console.log(Date.now() - time);
-		
-	});
-
-	it('passes input if exists', () => {
-		const input = readInputFile();
-		
-		const time = Date.now();
-		for (let i = 0; i < 1000; i++) {
-			const actual = solve2(input);
-		}
-		console.log(Date.now() - time);
-		
+		// const actual = solve(input);
+		// console.log({actual});
 	});
 })
