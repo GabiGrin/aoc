@@ -2,8 +2,7 @@
 import {assert} from 'chai';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
-import { bottomLeft, bottomRight, createGrid, dirs, neighboursWithDiag, range, topLeft, topRight, vectorEquals } from './utils';
-import { simpleAdd } from './utils/math';
+import { chunk } from './utils';
 
 const parseInput = (raw: string) => {
 	const rows = raw
@@ -11,10 +10,10 @@ const parseInput = (raw: string) => {
 		.map(n => n.trim())
 		.filter((v) => !!v)
 		.map(r => {
-			const [d, n] = r.split(' ');
-
-			// const 
-			return {d, n: Number(n)}
+			const [c, a] = r.split(' ')
+			console.log(c, a);
+			return {c, a: Number(a)}
+			// return r;
 		})
 		// .map(Number);
 		// .map(v => v.split('').map(Number));
@@ -25,75 +24,77 @@ const parseInput = (raw: string) => {
 
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
-	// console.log(input);
+	let x = 1;
+	const signals = [20, 60, 100, 140, 180, 220];
 
-	const grid = createGrid();
-	const rope = range(10).map(b => ({x: 0, y: 0}));
+	let v = 0;
+	
+	let cycles = 0;
 
-	const calcNext = (h, t) => {
-		if (t.x === h.x && t.y === h.y) {
-			return t;
+	const check = () => {
+		if (signals.includes(cycles)) {
+			console.log(cycles, x, x * cycles);
+			v+= x * cycles;
 		}
 
-		if (t.x === h.x) {
-			if (h.y > t.y) {
-				return dirs.D(t);
-			} else {
-				return dirs.U(t);
-			}
-		} else if (t.y === h.y) {
-			if (h.x > t.x) {
-				return dirs.R(t);
-			} else {
-				return dirs.L(t);
-			}
-		} else if (t.x > h.x && t.y > h.y) {
-			return topLeft(t);
-		} else if (t.x > h.x && t.y < h.y) {
-			return bottomLeft(t);
-
-		} else if (t.x < h.x && t.y > h.y) {
-			return topRight(t);
-
-		}else if (t.x < h.x && t.y < h.y) { 
-			return bottomRight(t);
-		}
-		throw 'bob'
 	}
 
-	const isAdj = (t, h) => {
-		if (vectorEquals(t, h)) {
-			return true;
-		}
-		return neighboursWithDiag.some(fn => {
-			return vectorEquals(t, fn(h));
-		})
-	}
+	const tape = [];
+	// tape.push({cycles, x})
+	// cycles++;
+	input.forEach((cmd) => {
+		const {a, c} = cmd;
+		if (c === 'noop') {
+			check();
+			tape.push({cycles, x})
+			cycles++;
+		} else {
+			// console.log(cycles, a, c);
+			tape.push({cycles, x})
+			check();
+			cycles++;
+			check();
+			tape.push({cycles, x})
+			cycles++;
+			x+=a;
 
-	input.forEach(({d, n}) => {
-		
-		const dir = dirs[d];
-		for (let i = 0; i< n; i++) {
-
-			rope[0] = dir(rope[0]);
-
-			rope.forEach((_, idx) => {
-				let h = rope[idx];
-				let t = rope[idx + 1];
-				if (t) {
-					if (!isAdj(h, t)) {
-						t = calcNext(h, t);
-					}
-					rope[idx] = h;
-					rope[idx + 1] = t;
-				}
-			})
-			
-			grid.set(rope[9], 1);
 		}
 	})
 
-	return grid.reduce((acc, curr) => simpleAdd(acc,curr), 0)
+	const screen = [];
+	let row = [];
+	tape.forEach((item) => {
+		const pos = item.cycles;
+		const sprite = [item.x- 1, item.x, item.x + 1];
+		// console.log(pos);
+		console.log(sprite, pos);
+		
+		if (sprite.includes(pos - 40 * screen.length)) {
+			row.push('#')
+		} else {
+			row.push('.')
+		}
+		if (row.length === 40) {
+			screen.push(row);
+			row = [];
+		}
+		
+	});
+
+	// const parts = chunk(screen, 40);
+	console.log(screen.map(s => s.join('')));
+	
+	// console.log(parts.map(s => s.join('')));
+	
+
+	// console.log(tape);
+	
+	// console.log(cycles, x);
+	
+	return v;
+
+
+	// return input.length;
 };
 
 // for wallaby
@@ -149,10 +150,10 @@ describe('part 1 tests', () => {
 	});
 
 	it('passes input if exists', () => {
-		const input = readInputFile();
+		// const input = readInputFile();
 		
 		
-		const actual = solve(input);
-		console.log({actual});
+		// const actual = solve(input);
+		// console.log({actual});
 	});
 })

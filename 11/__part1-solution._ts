@@ -2,19 +2,28 @@
 import {assert} from 'chai';
 import { getTestCases } from '../runtime/lib/get-tests';
 import { readInputFile } from '../runtime/lib/input-output-files';
-import { bottomLeft, bottomRight, createGrid, dirs, neighboursWithDiag, range, topLeft, topRight, vectorEquals } from './utils';
-import { simpleAdd } from './utils/math';
 
 const parseInput = (raw: string) => {
 	const rows = raw
-		.split('\n')
-		.map(n => n.trim())
-		.filter((v) => !!v)
+		.split('\n\n')
 		.map(r => {
-			const [d, n] = r.split(' ');
+			console.log(r);
+			const [m, s, o, t, tr, fl] = r.split('\n');
 
-			// const 
-			return {d, n: Number(n)}
+			const num = Number(m.match(/\d+/)[0]);
+			const items = s.replace('Starting items: ', '').split(', ').map(Number);
+			const op = o.replace('Operation: new =', '');
+			
+			const div = Number(t.match(/\d+/)[0]);
+			
+			const fn = (old) => eval(op.replace('old', old));
+			const ifTrue = Number(tr.match(/\d+/)[0]);
+			const ifFalse = Number(fl.match(/\d+/)[0]);
+
+			return {
+				num, items, div, fn, ifTrue, ifFalse
+			}
+
 		})
 		// .map(Number);
 		// .map(v => v.split('').map(Number));
@@ -25,75 +34,39 @@ const parseInput = (raw: string) => {
 
 export const solve = (raw: string): any => {
 	const input = parseInput(raw);
-	// console.log(input);
+	console.log(input[3]);
 
-	const grid = createGrid();
-	const rope = range(10).map(b => ({x: 0, y: 0}));
+	let itemsPerMonkey = input.map(_ => 0);
+	
+	for (let r = 0; r < 20; r++) {
+		console.log('round ' + r);
 
-	const calcNext = (h, t) => {
-		if (t.x === h.x && t.y === h.y) {
-			return t;
-		}
-
-		if (t.x === h.x) {
-			if (h.y > t.y) {
-				return dirs.D(t);
-			} else {
-				return dirs.U(t);
-			}
-		} else if (t.y === h.y) {
-			if (h.x > t.x) {
-				return dirs.R(t);
-			} else {
-				return dirs.L(t);
-			}
-		} else if (t.x > h.x && t.y > h.y) {
-			return topLeft(t);
-		} else if (t.x > h.x && t.y < h.y) {
-			return bottomLeft(t);
-
-		} else if (t.x < h.x && t.y > h.y) {
-			return topRight(t);
-
-		}else if (t.x < h.x && t.y < h.y) { 
-			return bottomRight(t);
-		}
-		throw 'bob'
-	}
-
-	const isAdj = (t, h) => {
-		if (vectorEquals(t, h)) {
-			return true;
-		}
-		return neighboursWithDiag.some(fn => {
-			return vectorEquals(t, fn(h));
-		})
-	}
-
-	input.forEach(({d, n}) => {
-		
-		const dir = dirs[d];
-		for (let i = 0; i< n; i++) {
-
-			rope[0] = dir(rope[0]);
-
-			rope.forEach((_, idx) => {
-				let h = rope[idx];
-				let t = rope[idx + 1];
-				if (t) {
-					if (!isAdj(h, t)) {
-						t = calcNext(h, t);
-					}
-					rope[idx] = h;
-					rope[idx + 1] = t;
-				}
-			})
+		for (let monkey of input) {
+			// console.log(monkey);
+			console.log(monkey.items);
 			
-			grid.set(rope[9], 1);
-		}
-	})
+			while (monkey.items.length) {
+				const item = monkey.items.shift();
+				const newLevel = Math.floor(monkey.fn(item) / 3);
+				itemsPerMonkey[monkey.num]++;
 
-	return grid.reduce((acc, curr) => simpleAdd(acc,curr), 0)
+				if (newLevel % monkey.div === 0) {
+					input[monkey.ifTrue].items.push(newLevel);
+				} else {
+					input[monkey.ifFalse].items.push(newLevel);
+				}
+			}
+
+		}
+		
+	}
+	console.log(itemsPerMonkey);
+	const [f, s] = itemsPerMonkey.sort((a,b) => b -a)
+	return f * s;
+	
+	
+	
+	// return input.length;
 };
 
 // for wallaby
@@ -149,10 +122,10 @@ describe('part 1 tests', () => {
 	});
 
 	it('passes input if exists', () => {
-		const input = readInputFile();
+		// const input = readInputFile();
 		
 		
-		const actual = solve(input);
-		console.log({actual});
+		// const actual = solve(input);
+		// console.log({actual});
 	});
 })
