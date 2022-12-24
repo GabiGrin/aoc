@@ -1,0 +1,90 @@
+// import { puzzleInput } from "../lib/lib";
+import {assert} from 'chai';
+import { getTestCases } from '../runtime/lib/get-tests';
+import { readInputFile } from '../runtime/lib/input-output-files';
+
+const parseInput = (raw: string) => {
+	const rows = raw
+		.split('\n')
+		.map(r => {
+			return r.split(',').map(Number);
+		})
+	return rows;
+}
+
+export const solve = (raw: string): any => {
+	const input = parseInput(raw);
+
+	const adj = (c1, c2) => {
+
+		const diffs = c1.map((v, i) => Math.abs(v - c2[i]));
+
+		const zeros = diffs.filter(d => d === 0);
+		const ones = diffs.filter(d => d === 1);
+
+		if (zeros.length === 2 && ones.length === 1) {
+			return diffs.indexOf(1);
+		}
+		return -1;
+
+	}
+
+	let sides = input.length * 6;
+	const did = new Set();
+
+
+	input.forEach((c1, i1) => {
+		input.forEach((c2, i2) =>{ 
+
+			if (i1 === i2) {
+				return;
+			}
+			const k =[i1,i2].sort().join(',');
+			if (did.has(k)) {
+				return;
+			}
+			const isIt = adj(c1, c2);			
+			if (isIt !== -1) {
+				sides -= 2;
+				did.add(k);
+			}
+		})
+	})
+
+	
+	
+
+	return sides;
+};
+
+// for wallaby
+describe('part 1 tests', () => {
+	it('passes for case 1 if exists', () => {
+		const case1 = getTestCases()[0];
+		if (case1) {
+			const actual = solve(case1.input);			
+			assert.equal(actual, case1.expected);
+		} else {
+			// no test case
+		}
+	});
+
+	it('passes for case 2 if exists', () => {
+		const case2 = getTestCases()[1];
+		if (case2) {
+			const actual = solve(case2.input);
+			assert.equal(actual, case2.expected);
+		} else {
+			// no test case
+		}
+	});
+
+
+	it('passes input if exists', () => {
+		// const input = readInputFile();
+		
+		
+		// const actual = solve(input);
+		// console.log({actual});
+	});
+})
